@@ -11,14 +11,6 @@ import com.rp.var.model.Option;
  */
 public class BlackScholes implements OptionPricer
 {   
-    /** Identifier of a call option.
-     * @deprecated */
-    public static final int CALL = 0;
-    /** Identifier of a put option.
-     * @deprecated  */
-    public static final int PUT  = 1;
-
-    private final int flag;
     private final double S;
     private final double X;
     private final double T;
@@ -29,8 +21,8 @@ public class BlackScholes implements OptionPricer
     /**
      * Computes the price of a European Call/Put option based on the parameters specified.
      *
-     * @param flag
-     *            0 for call, 1 for put
+     * @param optionType
+     *            call or put
      * @param S
      *            Starting price of the option
      * @param X
@@ -46,14 +38,13 @@ public class BlackScholes implements OptionPricer
     public BlackScholes(Option.OptionType optionType, double S, double X, double T, double r,
                         double v )
     {
-        this.flag=optionType == Option.OptionType.Call? 0:1;
         this.S=S;
         this.X=X;
         this.T=T;
         this.r=r;
         this.v=v;
 
-        computedOptionPrice = compute(flag, S, X, T, r,v);
+        computedOptionPrice = compute(optionType, S, X, T, r,v);
     }
 
     public BlackScholes(Option option,double rate,double volatility)
@@ -66,7 +57,7 @@ public class BlackScholes implements OptionPricer
         return computedOptionPrice;
     }
 
-    private static final double compute(int flag, double S, double X, double T, double r,
+    private static final double compute(Option.OptionType optionType, double S, double X, double T, double r,
                                         double v )
     {
         double d1, d2;
@@ -74,15 +65,20 @@ public class BlackScholes implements OptionPricer
         d1 = ( Math.log( S / X ) + ( r + v * v / 2 ) * T ) / ( v * Math.sqrt( T ) );
         d2 = d1 - v * Math.sqrt( T );
 
-        if( flag == CALL )
+        switch (optionType)
         {
-            return S * VarUtils.CNDF( d1 ) - X * Math.exp( -r * T ) * VarUtils.CNDF( d2 );
+            case Call:
+            {
+                return S * VarUtils.CNDF( d1 ) - X * Math.exp( -r * T ) * VarUtils.CNDF( d2 );
+            }
+            case Put:
+            {
+                return X * Math.exp( -r * T ) * VarUtils.CNDF( -d2 ) - S * VarUtils.CNDF( -d1 );
+            }
+            default:
+            {
+                throw new IllegalArgumentException("Unknown option type ["+optionType+"]");
+            }
         }
-        else if( flag == PUT )
-        {
-            return X * Math.exp( -r * T ) * VarUtils.CNDF( -d2 ) - S * VarUtils.CNDF( -d1 );
-        }
-        else
-            return -1.0;
     }
 }
