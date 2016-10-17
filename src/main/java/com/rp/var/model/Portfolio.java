@@ -4,6 +4,7 @@
 package com.rp.var.model;
 
 import com.rp.var.analytics.portfolio.VarUtils;
+import com.rp.var.util.FileHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -97,17 +98,17 @@ public class Portfolio
 
     public List<Double> getClosingPrices(int idx)
     {
-        return VarUtils.getClosingPrices(stockPriceDataFiles.get(idx));
+        return FileHelper.getClosingPrices(stockPriceDataFiles.get(idx));
     }
 
     public double[] getReturns( int idx )
     {
-        return VarUtils.getReturnsFromFile(stockPriceDataFiles.get(idx));
+        return VarUtils.computeDailyReturns(FileHelper.getClosingPrices(stockPriceDataFiles.get(idx)));
     }
 
     public List<double[]> getReturns( )
     {
-        return VarUtils.getReturnsFromFiles(stockPriceDataFiles);
+        return FileHelper.getReturnsFromFiles(stockPriceDataFiles);
     }
 
 

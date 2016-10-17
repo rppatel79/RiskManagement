@@ -8,6 +8,7 @@ import com.rp.var.analytics.security.options.BlackScholes;
 import com.rp.var.analytics.security.options.OptionPricer;
 import com.rp.var.model.Option;
 import com.rp.var.model.Portfolio;
+import com.rp.var.util.FileHelper;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -191,7 +192,7 @@ public class HistoricalSimulation
 
         /***************** STOCKS *********************/
         // use previous functionality to getOptionPrice final prices of the portfolio and options
-        List<double[]> portfolioReturns = VarUtils.getReturnsFromFiles( portfolio.getStockPriceDataFiles() );
+        List<double[]> portfolioReturns = FileHelper.getReturnsFromFiles( portfolio.getStockPriceDataFiles() );
         int numberOfStocks = portfolioReturns.size();
 
         // should be the smallest of the lengths of the array of returns.
@@ -254,7 +255,7 @@ public class HistoricalSimulation
     {
         double[] finalMinOptionsValue = new double[2];
         // get returns from file
-        double[] returns = VarUtils.getReturnsFromFile( option.getPriceData() );
+        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( option.getPriceData() ));
         int numberOfReturns = returns.length;
         List<Double> possibleOptionValues = new ArrayList<Double>();
         // getOptionPrice possible value change for each return in data
