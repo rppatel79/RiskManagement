@@ -9,10 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import com.rp.var.analytics.security.options.BinomialTree;
-import com.rp.var.analytics.security.options.BlackScholes;
 import com.rp.var.analytics.security.options.monte_carlo.MonteCarlo;
-import com.rp.var.analytics.security.options.OptionPricer;
 import com.rp.var.analytics.security.options.monte_carlo.MonteCarloBinomialTree;
 import com.rp.var.analytics.security.options.monte_carlo.MonteCarloBlackScholes;
 import com.rp.var.model.Option;
@@ -20,7 +17,6 @@ import com.rp.var.model.Portfolio;
 import com.rp.var.util.FileHelper;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.stat.StatUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -28,23 +24,18 @@ import org.apache.log4j.Logger;
  */
 public class MonteCarloSimulation
 {
+    private static final Logger logger_= Logger.getLogger(MonteCarloSimulation.class);
+
     /** Number of days to simulate prices over and getOptionPrice VaR for. */
     public static final int DEFAULT_TIME_PERIOD = 10;
     /** Number of days to simulate prices over and getOptionPrice VaR for. */
     public static final int DEFAULT_NUMBER_OF_SIMULATIONS = 1000;
-    /** Number of days to simulate prices over and getOptionPrice VaR for. */
-    private static final Logger logger_= Logger.getLogger(MonteCarloSimulation.class);
 
     /** Final VaR computed using this model. */
     private double            monteCarloFinalVar;
     /** Maximum VaR experienced during the simulation. */
     private double            monteCarloMaximumVar;
 
-    /**
-     * Random number generator using to generate Gaussian (Normal) and regularly distributed random
-     * numbers for simulating prices.
-     */
-    private static final Random            rng                 = new Random();
     /** List of investments in assets. */
     private List<Double> portfolioValues;
     /** List of historical stock price data, in same order as investments. */
@@ -92,7 +83,7 @@ public class MonteCarloSimulation
      * @param allSimulatedReturns Length of allSimulatedReturns must be <code>numberOfSimulations</code> and the length of each element must be <code>portfolio.size()</code>
      * @return an array containing final and max VaRs.
      */
-    MonteCarloResults computeForPortfolio(List<SimulationResults> allSimulatedReturns)
+    MonteCarloResults computeForPortfolio(List<com.rp.var.analytics.simulation.MonteCarlo.SimulationResults> allSimulatedReturns)
     {
         double initialPortFolioValue = 0.0;
         double finalPortfolioValue = 0.0;
@@ -148,7 +139,7 @@ public class MonteCarloSimulation
      * assets in the portfolio.
      * @param allSimulatedReturns Length of allSimulatedReturns must be <code>numberOfSimulations</code> and the length of each element must be <code>portfolio.size()</code>
     */
-    MonteCarloResults computeValueAtRisk(List<SimulationResults> allSimulatedReturns)
+    MonteCarloResults computeValueAtRisk(List<com.rp.var.analytics.simulation.MonteCarlo.SimulationResults> allSimulatedReturns)
     {
         MonteCarloResults ret = null;
         if( numberOfStocks == 1 )
@@ -185,7 +176,7 @@ public class MonteCarloSimulation
      */
     private MonteCarloResults computeForOneStock( double stockValue, double volatility )
     {
-        double[][] stockValues = simulatePrices( stockValue, volatility, numberOfSimulations, timePeriod );
+        double[][] stockValues = com.rp.var.analytics.simulation.MonteCarlo.simulatePrices( stockValue, volatility, numberOfSimulations, timePeriod );
 
         double[] finalValues = new double[numberOfSimulations];
         double[] maximumLosses = new double[numberOfSimulations];
@@ -218,7 +209,6 @@ public class MonteCarloSimulation
         // maximum VaR during stock price path simulation
         Arrays.sort( maximumLosses );
         double maximumVaR = stockValue - maximumLosses[0];
-        //double[] estimations = { finalVaR, maximumVaR };
         logger_.debug( "Monte Carlo VaR (1 stock - Maximum): "+ VarUtils.round( maximumVaR ) );
 
         this.monteCarloMaximumVar = maximumVaR;
@@ -233,13 +223,13 @@ public class MonteCarloSimulation
      * @param stockValues the investments made in the assets, in same order as the stock data files.
      * @return final and minimal values simulated for the portfolio to getOptionPrice VaR from.
      */
-    private MonteCarloResults computeForMultipleStocks( List<Double> stockValues, List<SimulationResults> allSimulatedReturns )
+    private MonteCarloResults computeForMultipleStocks( List<Double> stockValues, List<com.rp.var.analytics.simulation.MonteCarlo.SimulationResults> allSimulatedReturns )
     {
         if (allSimulatedReturns != null)
         {
             assert allSimulatedReturns.size() == numberOfSimulations;
             {
-                for (SimulationResults returns : allSimulatedReturns)
+                for (com.rp.var.analytics.simulation.MonteCarlo.SimulationResults returns : allSimulatedReturns)
                 {
                     assert returns.finalStockReturn.length == stockValues.size();
                     assert returns.minStockReturn.length == stockValues.size();
@@ -267,7 +257,7 @@ public class MonteCarloSimulation
         {
             // need to do this 1000 times, and then record the final prices and
             // lowest prices (highest VaR)
-            SimulationResults simulatedReturnsIteration = (allSimulatedReturns== null?simulateReturns():allSimulatedReturns.get(iteration));
+            com.rp.var.analytics.simulation.MonteCarlo.SimulationResults simulatedReturnsIteration = (allSimulatedReturns== null? com.rp.var.analytics.simulation.MonteCarlo.simulateReturns(numberOfStocks,timePeriod):allSimulatedReturns.get(iteration));
 
             double[] finalDayReturns = simulatedReturnsIteration.finalStockReturn;
             double[] minReturns = simulatedReturnsIteration.minStockReturn;
@@ -334,100 +324,6 @@ public class MonteCarloSimulation
     }
 
     /**
-     * computes the discounted value of an option in relation to the following variables
-     * 
-     * @param meanValue avg exercise value of option
-     * @param interest
-     * @param timeToMaturity
-     * @return discounted value
-     */
-    public static double getDiscountedValue( double meanValue, double interest, double timeToMaturity )
-    {
-        // discount average to today = value of the option
-        // PV = C / (1+interest)^numberofperiodsofinterest
-        // e.g. 1000 in 5 years at 10%, PV = 1000 / (1+0.10)^5
-        // if in days, convert to years
-        timeToMaturity = timeToMaturity / VarUtils.DAYS_IN_YEAR;
-        double denominator = Math.pow( ( 1 + interest ), timeToMaturity );
-        double valueOfOption = meanValue / denominator;
-        return valueOfOption;
-    }
-
-    /**
-     * Simulated normally distributed prices for a stock's initial price and its volatility.
-     *
-     * @param stockValue
-     * @param volatility
-     * @return 2D array containing prices over the time period for simulation.
-     */
-    public static double[][] simulatePrices( double stockValue, double volatility, int numberOfSimulations, int timePeriod )
-    {
-        double[][] stockValues = new double[numberOfSimulations][timePeriod];
-
-        double possibleStockValue;
-
-        for( int sim = 0 ; sim < numberOfSimulations ; sim++ )
-        {
-            for( int day = 0 ; day < timePeriod ; day++ )
-            {
-                if( day == 0 )
-                {
-                    possibleStockValue = stockValue
-                                         + ( volatility * rng.nextGaussian() * stockValue );
-                    stockValues[sim][day] = possibleStockValue;
-                }
-                else
-                {
-                    possibleStockValue = stockValues[sim][day - 1]
-                                         + ( volatility * rng.nextGaussian() * stockValues[sim][day - 1] );
-                    stockValues[sim][day] = possibleStockValue;
-                }
-            }
-        }
-        return stockValues;
-    }
-
-    /**
-     * Simulates normally distributed returns for each asset over the specified time period using
-     * the Monte Carlo simulation model.
-     *
-     * @return list of returns containing simulated returns for each asset in the portfolio.
-     */
-    SimulationResults simulateReturns()
-    {
-        double[][] simulatedReturns = new double[numberOfStocks][timePeriod];
-        double[] minReturns = new double[numberOfStocks];
-
-        // simulate returns
-        for( int stock = 0 ; stock < numberOfStocks ; stock++ )
-        {
-            for( int day = 0 ; day < timePeriod ; day++ )
-            {
-                simulatedReturns[stock][day] = rng.nextGaussian();
-            }
-        }
-
-        double[] finalDayReturns = new double[numberOfStocks];
-
-        // record minimum and final day returns for each stock
-        for( int i = 0 ; i < numberOfStocks ; i++ )
-        {
-            finalDayReturns[i] = simulatedReturns[i][timePeriod - 1];
-
-            double[] returnsForStock = Arrays.copyOf( simulatedReturns[i],
-                    timePeriod );
-            Arrays.sort( returnsForStock );
-            minReturns[i] = returnsForStock[0];
-        }
-
-        SimulationResults simulationResults = new SimulationResults();
-        simulationResults.finalStockReturn= finalDayReturns;
-        simulationResults.minStockReturn= minReturns;
-
-        return simulationResults;
-    }
-
-    /**
      * Estimates var for a certain number of days for backtesting.
      * 
      * @param numberOfDaysToTest number of days to estimate VaR over
@@ -467,12 +363,6 @@ public class MonteCarloSimulation
     public double getMonteCarloMaximumVar()
     {
         return monteCarloMaximumVar;
-    }
-
-    public static class SimulationResults
-    {
-        public double[] minStockReturn;
-        public double[] finalStockReturn;
     }
 
     public static class MonteCarloResults

@@ -2,6 +2,7 @@ package com.rp.var.analytics.security.options.monte_carlo;
 
 import com.rp.var.analytics.portfolio.MonteCarloSimulation;
 import com.rp.var.analytics.security.options.OptionPricer;
+import com.rp.var.analytics.util.PreventValueCalculator;
 import com.rp.var.model.Option;
 import org.apache.commons.math3.stat.StatUtils;
 
@@ -47,7 +48,7 @@ public class MonteCarlo implements OptionPricer
     {
         double[] finalMinValues = new double[2];
         // generate large number of random possible price paths
-        double[][] prices = MonteCarloSimulation.simulatePrices( option_.getInitialStockPrice(),
+        double[][] prices = com.rp.var.analytics.simulation.MonteCarlo.simulatePrices( option_.getInitialStockPrice(),
                 option_.getDailyVolatility(),numberOfSimulations_, timePeriod_ );
         // calculate exercise value/payoff of option for each path
         // intrinsic value - Call option - Max[Sn-X, 0], Put option - Max[X-Sn,
@@ -81,14 +82,14 @@ public class MonteCarlo implements OptionPricer
             // for safety
             discountPeriod = option_.getTimeToMaturity();
         }
-        double finalValueOfOption = MonteCarloSimulation.getDiscountedValue( meanExerciseValue, option_.getInterest(),
+        double finalValueOfOption = PreventValueCalculator.getDiscountedValue( meanExerciseValue, option_.getInterest(),
                 option_.getTimeToMaturity() - timePeriod_ );
 
         Arrays.sort( exerciseValues );
 
         double minExerciseValue = exerciseValues[0];
 
-        double minValueOfOption = MonteCarloSimulation.getDiscountedValue( minExerciseValue, option_.getInterest(),
+        double minValueOfOption = PreventValueCalculator.getDiscountedValue( minExerciseValue, option_.getInterest(),
                 option_.getTimeToMaturity() - timePeriod_ );
 
         MonteCarloResults results = new MonteCarloResults();

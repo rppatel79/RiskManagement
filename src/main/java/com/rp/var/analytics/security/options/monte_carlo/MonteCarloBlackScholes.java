@@ -3,6 +3,7 @@ package com.rp.var.analytics.security.options.monte_carlo;
 import com.rp.var.analytics.portfolio.MonteCarloSimulation;
 import com.rp.var.analytics.security.options.BlackScholes;
 import com.rp.var.analytics.security.options.OptionPricer;
+import com.rp.var.analytics.util.PreventValueCalculator;
 import com.rp.var.model.Option;
 import org.apache.commons.math3.stat.StatUtils;
 
@@ -112,10 +113,10 @@ public class MonteCarloBlackScholes implements OptionPricer
         }
         double meanFinalDayValue = StatUtils.mean( finalDayPrices );
         double meanMinValue = StatUtils.mean( minPrices );
-        double discountedFinalValue = MonteCarloSimulation.getDiscountedValue( meanFinalDayValue,
+        double discountedFinalValue = PreventValueCalculator.getDiscountedValue( meanFinalDayValue,
                 option.getInitialStockPrice(),
                 discountPeriod );
-        double discountedMinValue = MonteCarloSimulation.getDiscountedValue( meanMinValue, option.getInterest(),
+        double discountedMinValue = PreventValueCalculator.getDiscountedValue( meanMinValue, option.getInterest(),
                 discountPeriod );
         // double VaR = initialOptionPrice - finalDayValue;
         // double maxVaR = initialOptionPrice - minPrices[0];
