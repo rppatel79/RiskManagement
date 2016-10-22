@@ -5,6 +5,7 @@ package com.rp.var.analytics.portfolio;
 
 import com.rp.var.analytics.security.options.BinomialTree;
 import com.rp.var.analytics.security.options.BlackScholes;
+import com.rp.var.analytics.security.options.monte_carlo.MonteCarlo;
 import com.rp.var.analytics.security.options.OptionPricer;
 import com.rp.var.model.Option;
 import com.rp.var.model.Portfolio;
@@ -295,8 +296,8 @@ public class HistoricalSimulation
                     default:
                         option.setInitialStockPrice( stockPrice );
                         option.setTimeToMaturity( currentTimeToMaturity );
-                        MonteCarloSimulation mc = new MonteCarloSimulation();
-                        historicalValue = mc.priceOptionUsingMonteCarlo( option )[0];
+                        OptionPricer mc = new MonteCarlo(option);
+                        historicalValue = mc.getOptionPrice();
                         break;
                 }
 
