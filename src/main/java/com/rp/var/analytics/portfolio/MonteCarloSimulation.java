@@ -33,7 +33,7 @@ public class MonteCarloSimulation
     /** Number of days to simulate prices over and getOptionPrice VaR for. */
     public static final int DEFAULT_NUMBER_OF_SIMULATIONS = 1000;
     /** Number of days to simulate prices over and getOptionPrice VaR for. */
-    public static final Logger logger_= Logger.getLogger(MonteCarloSimulation.class);
+    private static final Logger logger_= Logger.getLogger(MonteCarloSimulation.class);
 
     /** Final VaR computed using this model. */
     private double            monteCarloFinalVar;
@@ -61,25 +61,6 @@ public class MonteCarloSimulation
     private Portfolio portfolio;
 
     /**
-     * Initialises a Monte Carlo simulation model using some list of investments, historical price
-     * data files, confidence level and a time period.
-     * 
-     * @param portfolioValues
-     * @param stockPriceDataFiles
-     * @param confidence
-     * @param timePeriod
-     */
-    public MonteCarloSimulation( List<Double> portfolioValues,
-                                 List<File> stockPriceDataFiles, int confidence, int timePeriod )
-    {
-        this.portfolioValues = portfolioValues;
-        this.stockPriceDataFiles = stockPriceDataFiles;
-        this.numberOfStocks = this.portfolioValues.size();
-        this.confidence = confidence;
-        this.timePeriod = timePeriod;
-    }
-
-    /**
      * Initialises a Monte Carlo simulation model using a portfolio, confidence and time period for
      * simulation.
      * 
@@ -98,17 +79,9 @@ public class MonteCarloSimulation
     }
 
     /**
-     * Empty constructor for testing.
-     */
-    public MonteCarloSimulation()
-    {
-        this.timePeriod = DEFAULT_TIME_PERIOD;
-    }
-
-    /**
      * @see MonteCarloSimulation#computeForPortfolio(List)
      */
-    public double[] computeForPortfolio()
+    public MonteCarloResults computeForPortfolio()
     {
         return computeForPortfolio(null);
     }
@@ -119,7 +92,7 @@ public class MonteCarloSimulation
      * @param allSimulatedReturns Length of allSimulatedReturns must be <code>numberOfSimulations</code> and the length of each element must be <code>portfolio.size()</code>
      * @return an array containing final and max VaRs.
      */
-    double[] computeForPortfolio(List<SimulationResults> allSimulatedReturns)
+    MonteCarloResults computeForPortfolio(List<SimulationResults> allSimulatedReturns)
     {
         double initialPortFolioValue = 0.0;
         double finalPortfolioValue = 0.0;
@@ -135,7 +108,7 @@ public class MonteCarloSimulation
 
         initialPortFolioValue = VarUtils.sumOf( portfolio.getInvestments() ) + initialOptionsValue;
 
-        double[] finalMinStockValues = computeForMultipleStocks( this.portfolioValues,allSimulatedReturns);
+        MonteCarloResults monteCarloResults= computeForMultipleStocks( this.portfolioValues,allSimulatedReturns);
 
         double optionsFinalValue = 0.0, optionsMinValue = 0.0;
         for( Option o : options )
@@ -161,12 +134,13 @@ public class MonteCarloSimulation
             }
         }
 
-        finalPortfolioValue = finalMinStockValues[0] + optionsFinalValue;
-        double minPortfolioValue = finalMinStockValues[1] + optionsMinValue;
+        finalPortfolioValue = monteCarloResults.finalVaR + optionsFinalValue;
+        double minPortfolioValue = monteCarloResults.maximumVaR + optionsMinValue;
         double finalVaR = initialPortFolioValue - finalPortfolioValue;
         double maxVaR = initialPortFolioValue - minPortfolioValue;
-        double[] finalMaxVaR = { Math.round( finalVaR ), Math.round( maxVaR ) };
-        return finalMaxVaR;
+        //double[] finalMaxVaR = { Math.round( finalVaR ), Math.round( maxVaR ) };
+
+        return new MonteCarloResults(finalVaR, maxVaR);
     }
 
     /**
@@ -174,9 +148,9 @@ public class MonteCarloSimulation
      * assets in the portfolio.
      * @param allSimulatedReturns Length of allSimulatedReturns must be <code>numberOfSimulations</code> and the length of each element must be <code>portfolio.size()</code>
     */
-    double[] computeValueAtRisk(List<SimulationResults> allSimulatedReturns)
+    MonteCarloResults computeValueAtRisk(List<SimulationResults> allSimulatedReturns)
     {
-        double [] ret = null;
+        MonteCarloResults ret = null;
         if( numberOfStocks == 1 )
         {
             double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper
@@ -196,7 +170,7 @@ public class MonteCarloSimulation
     /**
      * @see MonteCarloSimulation#computeForPortfolio(List)
      */
-    public double[] computeValueAtRisk()
+    public MonteCarloResults computeValueAtRisk()
     {
         return computeValueAtRisk(null);
     }
@@ -209,7 +183,7 @@ public class MonteCarloSimulation
      * @param volatility
      * @return array containing final and max vars
      */
-    private double[] computeForOneStock( double stockValue, double volatility )
+    private MonteCarloResults computeForOneStock( double stockValue, double volatility )
     {
         double[][] stockValues = simulatePrices( stockValue, volatility, numberOfSimulations, timePeriod );
 
@@ -244,14 +218,12 @@ public class MonteCarloSimulation
         // maximum VaR during stock price path simulation
         Arrays.sort( maximumLosses );
         double maximumVaR = stockValue - maximumLosses[0];
-        double[] estimations = { finalVaR, maximumVaR };
-        /*
-         * System.out.println( "Monte Carlo VaR (1 stock - Maximum): "
-         * + VarUtils.round( maximumVaR ) );
-         */
+        //double[] estimations = { finalVaR, maximumVaR };
+        logger_.debug( "Monte Carlo VaR (1 stock - Maximum): "+ VarUtils.round( maximumVaR ) );
+
         this.monteCarloMaximumVar = maximumVaR;
 
-        return estimations;
+        return new MonteCarloResults(finalVaR, maximumVaR);
     }
 
     /**
@@ -261,7 +233,7 @@ public class MonteCarloSimulation
      * @param stockValues the investments made in the assets, in same order as the stock data files.
      * @return final and minimal values simulated for the portfolio to getOptionPrice VaR from.
      */
-    private double[] computeForMultipleStocks( List<Double> stockValues, List<SimulationResults> allSimulatedReturns )
+    private MonteCarloResults computeForMultipleStocks( List<Double> stockValues, List<SimulationResults> allSimulatedReturns )
     {
         if (allSimulatedReturns != null)
         {
@@ -355,9 +327,9 @@ public class MonteCarloSimulation
                             + VarUtils.round( maximumVaR ) );
         this.monteCarloMaximumVar = maximumVaR;
 
-        double[] finalMinValues = { valueAtPercentile, portfolioFinalSimulatedValues[0] };
+        //double[] finalMinValues = { valueAtPercentile, portfolioFinalSimulatedValues[0] };
 
-        return finalMinValues;
+        return new MonteCarloResults(valueAtPercentile, portfolioFinalSimulatedValues[0]);
 
     }
 
@@ -425,7 +397,6 @@ public class MonteCarloSimulation
     {
         double[][] simulatedReturns = new double[numberOfStocks][timePeriod];
         double[] minReturns = new double[numberOfStocks];
-        List<double[]> minAndFinalReturns = new ArrayList<double[]>();
 
         // simulate returns
         for( int stock = 0 ; stock < numberOfStocks ; stock++ )
@@ -456,12 +427,6 @@ public class MonteCarloSimulation
         return simulationResults;
     }
 
-    public static class SimulationResults
-    {
-        public double[] minStockReturn;
-        public double[] finalStockReturn;
-    }
-
     /**
      * Estimates var for a certain number of days for backtesting.
      * 
@@ -479,8 +444,8 @@ public class MonteCarloSimulation
         {
             double[] returnsToUse = Arrays.copyOf( returns, numberOfReturnsToUse );
             double volatility = VarUtils.computeVolatility_GARCH( returnsToUse );
-            double[] finalMaxVars = computeForOneStock( portfolioValues.get( 0 ), volatility );
-            estimations[day] = finalMaxVars[0];
+            MonteCarloResults monteCarloResults = computeForOneStock( portfolioValues.get( 0 ), volatility );
+            estimations[day] = monteCarloResults.finalVaR;
             numberOfReturnsToUse++;
         }
         return estimations;
@@ -503,4 +468,22 @@ public class MonteCarloSimulation
     {
         return monteCarloMaximumVar;
     }
+
+    public static class SimulationResults
+    {
+        public double[] minStockReturn;
+        public double[] finalStockReturn;
+    }
+
+    public static class MonteCarloResults
+    {
+        public final double finalVaR;
+        public final double maximumVaR;
+
+        public MonteCarloResults(double finalVaR, double maximumVaR) {
+            this.finalVaR = finalVaR;
+            this.maximumVaR = maximumVaR;
+        }
+    }
+
 }

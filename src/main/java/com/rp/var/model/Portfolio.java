@@ -33,7 +33,6 @@ public class Portfolio
      */
     public Portfolio()
     {
-        //assets = new ArrayList<Asset>();
         investments = new ArrayList<Double>();
         stockPriceDataFiles = new ArrayList<File>();
         options = new ArrayList<Option>();

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.rp.var.model.Asset;
+import com.rp.var.model.Portfolio;
 import com.rp.var.util.FileHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,32 +25,39 @@ public class MonteCarloSimulation_UnitTest
     @Test
     public void shouldReturnCorrectVARForTwoStocks()
     {
-        List<Double> values= new ArrayList<Double>();
-        List<File>   stockFiles= new ArrayList<File>();
-
-        stockFiles.clear();
-        stockFiles.add( new File( "test-classes/APPLE.csv" ) );
-        stockFiles.add( new File( "test-classes/MSFT_15082013_15112013.csv" ) );
-        values.clear();
-        values.add( 1000.0 );
-        values.add( 2000.0 );
+        List<Asset> stockPortfolio = new ArrayList<>();
+        {
+            Asset asset = new Asset();
+            asset.setData(new File("test-classes/APPLE.csv" ));
+            asset.setInvestment(1000.0);
+            stockPortfolio.add(asset);
+        }
+        {
+            Asset asset = new Asset();
+            asset.setData(new File("test-classes/MSFT_15082013_15112013.csv"));
+            asset.setInvestment(2000.0);
+            stockPortfolio.add(asset);
+        }
+        Portfolio portfolio = new Portfolio();
+        portfolio.setAssets(stockPortfolio);
 
         List<MonteCarloSimulation.SimulationResults> simulation = new ArrayList<>(MonteCarloSimulation.DEFAULT_TIME_PERIOD);
-
 
         for (int i =0 ; i < MonteCarloSimulation.DEFAULT_NUMBER_OF_SIMULATIONS ; i++)
         {
             MonteCarloSimulation.SimulationResults simulationResults = new MonteCarloSimulation.SimulationResults();
-            simulationResults.minStockReturn = new double[stockFiles.size()];
-            simulationResults.finalStockReturn = new double[stockFiles.size()];
-            for (int stockId = 0 ; stockId < stockFiles.size() ; stockId++) {
+
+            int portfolioSize = portfolio.getInvestments().size();
+            simulationResults.minStockReturn = new double[portfolioSize];
+            simulationResults.finalStockReturn = new double[portfolioSize];
+            for (int stockId = 0 ; stockId < portfolioSize ; stockId++) {
                 simulationResults.minStockReturn[stockId] = 0.01;
                 simulationResults.finalStockReturn[stockId] = 0.2;
             }
             simulation.add(simulationResults);
         }
 
-        MonteCarloSimulation sim = new MonteCarloSimulation( values, stockFiles, 99, 10 );
+        MonteCarloSimulation sim = new MonteCarloSimulation(portfolio,99, 10);
         sim.computeValueAtRisk(simulation);
         double monteCarloFinalVar = sim.getMonteCarloFinalVar();
         double monteCarloMaximumVar = sim.getMonteCarloMaximumVar();
