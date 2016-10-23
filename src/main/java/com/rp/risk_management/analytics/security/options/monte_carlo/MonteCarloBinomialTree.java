@@ -53,12 +53,12 @@ public class MonteCarloBinomialTree
         double[][] optionPrices = new double[numberOfSimulations][timePeriod];
         double[] finalDayOptionPrices = new double[numberOfSimulations];
         double[] minOptionPrices = new double[numberOfSimulations];
-        OptionPricer bt;
+
         for( int simulation = 0 ; simulation < numberOfSimulations ; simulation++ )
         {
             for( int day = 0 ; day < timePeriod ; day++ )
             {
-                bt = new BinomialTree( stockPrices[simulation][day], option.getStrike(),
+                OptionPricer bt = new BinomialTree( stockPrices[simulation][day], option.getStrike(),
                         option.getTimeToMaturity() - day,
                         option.getDailyVolatility(), option.getInterest(),
                         option.getOptionType(), option.getOptionStyle() );
@@ -67,7 +67,6 @@ public class MonteCarloBinomialTree
                         option.getInterest(),
                         option.getTimeToMaturity()
                                 - day );
-                bt = null;
             }
             finalDayOptionPrices[simulation] = optionPrices[simulation][timePeriod];
             Arrays.sort( optionPrices[simulation] );

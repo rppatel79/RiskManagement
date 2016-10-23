@@ -30,9 +30,11 @@ public class MonteCarloSimulation
     /** Number of days to simulate prices over and getOptionPrice VaR for. */
     public static final int DEFAULT_NUMBER_OF_SIMULATIONS = 1000;
 
-    /** Final VaR computed using this model. */
+    /** Final VaR computed using this model.
+     * @deprecated */
     private double            monteCarloFinalVar;
-    /** Maximum VaR experienced during the simulation. */
+    /** Maximum VaR experienced during the simulation.
+     * * @deprecated */
     private double            monteCarloMaximumVar;
 
     /** List of investments in assets. */
@@ -69,11 +71,11 @@ public class MonteCarloSimulation
     }
 
     /**
-     * @see MonteCarloSimulation#computeForPortfolio(List)
+     * @see MonteCarloSimulation#computeValueAtRiskForPortfolio(List)
      */
-    public MonteCarloResults computeForPortfolio()
+    public MonteCarloResults computeValueAtRiskForPortfolio()
     {
-        return computeForPortfolio(null);
+        return computeValueAtRiskForPortfolio(null);
     }
 
     /**
@@ -82,7 +84,7 @@ public class MonteCarloSimulation
      * @param allSimulatedReturns Length of allSimulatedReturns must be <code>numberOfSimulations</code> and the length of each element must be <code>portfolio.size()</code>
      * @return an array containing final and max VaRs.
      */
-    MonteCarloResults computeForPortfolio(List<com.rp.risk_management.analytics.simulation.MonteCarlo.SimulationResults> allSimulatedReturns)
+    private MonteCarloResults computeValueAtRiskForPortfolio(List<com.rp.risk_management.analytics.simulation.MonteCarlo.SimulationResults> allSimulatedReturns)
     {
         double initialPortFolioValue = 0.0;
         double finalPortfolioValue = 0.0;
@@ -158,7 +160,7 @@ public class MonteCarloSimulation
     }
 
     /**
-     * @see MonteCarloSimulation#computeForPortfolio(List)
+     * @see MonteCarloSimulation#computeValueAtRiskForPortfolio(List)
      */
     public MonteCarloResults computeValueAtRisk()
     {
