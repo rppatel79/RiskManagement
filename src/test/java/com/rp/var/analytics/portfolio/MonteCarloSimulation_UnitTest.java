@@ -34,8 +34,7 @@ public class MonteCarloSimulation_UnitTest
             asset.setInvestment(2000.0);
             stockPortfolio.add(asset);
         }
-        Portfolio portfolio = new Portfolio();
-        portfolio.setAssets(stockPortfolio);
+        Portfolio portfolio = new Portfolio(stockPortfolio,null);
 
         List<MonteCarlo.SimulationResults> simulation = new ArrayList<>(MonteCarloSimulation.DEFAULT_TIME_PERIOD);
 
@@ -53,12 +52,10 @@ public class MonteCarloSimulation_UnitTest
         }
 
         MonteCarloSimulation sim = new MonteCarloSimulation(portfolio,99, 10);
-        sim.computeValueAtRisk(simulation);
-        double monteCarloFinalVar = sim.getMonteCarloFinalVar();
-        double monteCarloMaximumVar = sim.getMonteCarloMaximumVar();
-        assertTrue( monteCarloMaximumVar >= monteCarloFinalVar );
-        assertEquals("final var",-8.86128,monteCarloFinalVar,0.001);
-        assertEquals("max var",-0.44244,monteCarloMaximumVar,0.001);
+        MonteCarloSimulation.MonteCarloResults results =sim.computeValueAtRisk(simulation);//TODO
+        assertTrue( results.maximumVaR >= results.finalVaR);
+        assertEquals("final var",3000-(-8.8612843164656),results.finalVaR,0.001);
+        assertEquals("max var",3000-(-8.8612843164656),results.maximumVaR,0.001);
     }
 
 }
