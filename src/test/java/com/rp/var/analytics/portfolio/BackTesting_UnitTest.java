@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BackTesting_UnitTest
@@ -24,8 +25,8 @@ public class BackTesting_UnitTest
         double msftInvestment = 1000000.0;
         portfolioValues.add( msftInvestment );
         Asset msft = new Asset( prevStockData, "MSFT", msftInvestment );
-        Portfolio portfolio = new Portfolio();
-        portfolio.addAsset( msft );
+        Portfolio portfolio = new Portfolio(Collections.singletonList(msft),null);
+        //portfolio.addAsset( msft );
         return portfolio;
     }
 

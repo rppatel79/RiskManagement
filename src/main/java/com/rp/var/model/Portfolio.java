@@ -128,23 +128,6 @@ public class Portfolio
     }
 
     /**
-     * Add an asset to this portfolio.
-     * @param asset
-     */
-    public void addAsset( Asset asset )
-    {
-        updatePortfolioAssets(Collections.singletonList(asset));
-    }
-
-    /**
-     * @param assets the assets to set
-     */
-    public void setAssets( List<Asset> assets )
-    {
-        updatePortfolioAssets(assets);
-    }
-
-    /**
      * Returns the total value of the investments within the portfolio.
      */
     public double getAssetsValue()

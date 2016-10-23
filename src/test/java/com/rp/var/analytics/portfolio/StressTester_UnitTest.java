@@ -3,6 +3,8 @@ package com.rp.var.analytics.portfolio;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import com.rp.var.model.Asset;
 import com.rp.var.model.Portfolio;
@@ -26,7 +28,7 @@ public class StressTester_UnitTest
         Arrays.fill(upOrDownArray, -0.04);
 
 
-        StressTester st = new StressTester( getPortfolioWithOneStock(), totalDays,totalDays/4 );
+        StressTester st = new StressTester( new Portfolio(Collections.singletonList(getTestAsset()),null), totalDays,totalDays/4 );
         st.run(upOrDownArray);
 
         double[] simulatedValues=st.getSimulatedValues();
@@ -45,9 +47,11 @@ public class StressTester_UnitTest
     @Test
     public void testStressReturnsForMultipleStocks()
     {
-        Portfolio p = getPortfolioWithOneStock();
-        Asset a = new Asset( new File( "test-classes/APPLE.csv" ), "APPL", 2000.0 );
-        p.addAsset( a );
+        List<Asset> assets = new ArrayList<>();
+        assets.add(getTestAsset());
+        assets.add(new Asset( new File( "test-classes/APPLE.csv" ), "APPL", 2000.0 ));
+        Portfolio p = new Portfolio(assets,null);
+
 
         int totalDays=100;
         StressTester st = new StressTester( p,totalDays,totalDays/4 );
@@ -63,11 +67,11 @@ public class StressTester_UnitTest
         double[] losses=st.getLosses();
         Arrays.sort(losses);
 
-        Assert.assertEquals(18.3,simulatedValues[0],0.1);
-        Assert.assertEquals(2000.0,simulatedValues[simulatedValues.length-1],0.1);
+        Assert.assertEquals(27.47,simulatedValues[0],0.1);
+        Assert.assertEquals(3000.0,simulatedValues[simulatedValues.length-1],0.1);
 
         Assert.assertEquals(0.0,losses[0],0.1);
-        Assert.assertEquals(1981.7,losses[simulatedValues.length-1],0.1);
+        Assert.assertEquals(2972.53,losses[simulatedValues.length-1],0.1);
     }
 
     /**
@@ -86,8 +90,7 @@ public class StressTester_UnitTest
         
     }
 
-
-    private Portfolio getPortfolioWithOneStock()
+    private Asset getTestAsset()
     {
         File prevStockData = new File( "test-classes/MSFT_Apr2012_Apr2013.csv" );
         ArrayList<File> stockPriceDataFiles = new ArrayList<File>();
@@ -96,9 +99,6 @@ public class StressTester_UnitTest
         double msftInvestment = 1000.0;
         portfolioValues.add( msftInvestment );
         Asset msft = new Asset( prevStockData, "MSFT", msftInvestment );
-        Portfolio portfolio = new Portfolio();
-        portfolio.addAsset( msft );
-        return portfolio;
+        return msft;
     }
-
 }
