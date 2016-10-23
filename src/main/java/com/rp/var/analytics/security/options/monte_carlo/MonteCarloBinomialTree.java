@@ -3,6 +3,7 @@ package com.rp.var.analytics.security.options.monte_carlo;
 import com.rp.var.analytics.portfolio.MonteCarloSimulation;
 import com.rp.var.analytics.security.options.BinomialTree;
 import com.rp.var.analytics.security.options.OptionPricer;
+import com.rp.var.analytics.util.PreventValueCalculator;
 import com.rp.var.model.Option;
 import org.apache.commons.math3.stat.StatUtils;
 
@@ -41,7 +42,7 @@ public class MonteCarloBinomialTree
      */
     private static MonteCarloResults priceOptionUsingBinomialTree(Option option, int numberOfSimulations, int timePeriod )
     {
-        double[][] stockPrices = MonteCarloSimulation.simulatePrices( option.getInitialStockPrice(),
+        double[][] stockPrices = com.rp.var.analytics.simulation.MonteCarlo.simulatePrices( option.getInitialStockPrice(),
                 option.getDailyVolatility() ,numberOfSimulations, timePeriod);
         if (stockPrices.length != numberOfSimulations)
             throw new IllegalArgumentException("Simulated stock prices should be ["+numberOfSimulations+"] length");
@@ -62,7 +63,7 @@ public class MonteCarloBinomialTree
                         option.getDailyVolatility(), option.getInterest(),
                         option.getOptionType(), option.getOptionStyle() );
                 // discount option price to today
-                optionPrices[simulation][day] = MonteCarloSimulation.getDiscountedValue( bt.getOptionPrice(),
+                optionPrices[simulation][day] = PreventValueCalculator.getDiscountedValue( bt.getOptionPrice(),
                         option.getInterest(),
                         option.getTimeToMaturity()
                                 - day );
@@ -84,9 +85,9 @@ public class MonteCarloBinomialTree
             discountPeriod = option.getTimeToMaturity();
         }
 
-        double discountedFinalValue = MonteCarloSimulation.getDiscountedValue( meanFinalPrice, option.getInterest(),
+        double discountedFinalValue = PreventValueCalculator.getDiscountedValue( meanFinalPrice, option.getInterest(),
                 discountPeriod );
-        double discountedMinValue = MonteCarloSimulation.getDiscountedValue( meanMinPrice, option.getInterest(),
+        double discountedMinValue = PreventValueCalculator.getDiscountedValue( meanMinPrice, option.getInterest(),
                 discountPeriod );
 
         MonteCarloResults monteCarloResults = new MonteCarloResults();

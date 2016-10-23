@@ -33,9 +33,9 @@ public class Portfolio
      */
     public Portfolio()
     {
-        investments = new ArrayList<Double>();
-        stockPriceDataFiles = new ArrayList<File>();
-        options = new ArrayList<Option>();
+        investments = new ArrayList<>();
+        stockPriceDataFiles = new ArrayList<>();
+        options = new ArrayList<>();
     }
 
     /**
