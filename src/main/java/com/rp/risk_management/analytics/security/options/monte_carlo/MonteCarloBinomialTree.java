@@ -90,10 +90,7 @@ public class MonteCarloBinomialTree
         double discountedMinValue = PreventValueCalculator.getDiscountedValue( meanMinPrice, option.getInterest(),
                 discountPeriod );
 
-        MonteCarloResults monteCarloResults = new MonteCarloResults();
-        monteCarloResults.finalValueOfOption_ = discountedFinalValue;
-        monteCarloResults.minValueOfOption_ = discountedMinValue;
-
+        MonteCarloResults monteCarloResults = new MonteCarloResults(discountedFinalValue,discountedMinValue);
         return monteCarloResults;
     }
 

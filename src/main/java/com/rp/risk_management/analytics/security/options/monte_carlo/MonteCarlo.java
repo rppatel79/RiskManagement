@@ -46,7 +46,6 @@ public class MonteCarlo implements OptionPricer
      */
     private MonteCarloResults priceOptionUsingMonteCarlo()
     {
-        double[] finalMinValues = new double[2];
         // generate large number of random possible price paths
         double[][] prices = com.rp.risk_management.analytics.simulation.MonteCarlo.simulatePrices( option_.getInitialStockPrice(),
                 option_.getDailyVolatility(),numberOfSimulations_, timePeriod_ );
@@ -92,9 +91,7 @@ public class MonteCarlo implements OptionPricer
         double minValueOfOption = PreventValueCalculator.getDiscountedValue( minExerciseValue, option_.getInterest(),
                 option_.getTimeToMaturity() - timePeriod_ );
 
-        MonteCarloResults results = new MonteCarloResults();
-        results.finalValueOfOption_= finalValueOfOption;
-        results.minValueOfOption_= minValueOfOption;
+        MonteCarloResults results = new MonteCarloResults(finalValueOfOption,minValueOfOption);
         return results;
     }
 

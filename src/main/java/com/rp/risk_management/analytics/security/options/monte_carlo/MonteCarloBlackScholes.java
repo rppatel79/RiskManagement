@@ -121,9 +121,7 @@ public class MonteCarloBlackScholes implements OptionPricer
         // double VaR = initialOptionPrice - finalDayValue;
         // double maxVaR = initialOptionPrice - minPrices[0];
 
-        MonteCarloResults monteCarloResults = new MonteCarloResults();
-        monteCarloResults.finalValueOfOption_ = discountedFinalValue;
-        monteCarloResults.minValueOfOption_ = discountedMinValue;
+        MonteCarloResults monteCarloResults = new MonteCarloResults(discountedFinalValue,discountedMinValue);
         return monteCarloResults;
     }
 
