@@ -2,6 +2,7 @@ package com.rp.risk_management.analytics.portfolio;
 
 import com.rp.risk_management.model.Asset;
 import com.rp.risk_management.model.Portfolio;
+import com.rp.risk_management.util.ResourceHelper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class BackTesting_UnitTest
      */
     private static Portfolio getPortfolioWithOneStock()
     {
-        File prevStockData = new File( "test-classes/MSFT_Apr2012_Apr2013.csv" );
+        File prevStockData = ResourceHelper.getInstance().getResource("MSFT_Apr2012_Apr2013.csv");
         List<File> stockPriceDataFiles = new ArrayList<File>();
         stockPriceDataFiles.add( prevStockData );
         List<Double> portfolioValues = new ArrayList<Double>();
