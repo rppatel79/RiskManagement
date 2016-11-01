@@ -3,11 +3,11 @@ package com.rp.risk_management.analytics.portfolio;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.ResourceHelper;
 import org.junit.Test;
 
 public class VarUtils_UnitTest
@@ -17,7 +17,7 @@ public class VarUtils_UnitTest
     @Test
     public void shouldReturnCorrectNumberOfReturnsFromCSVFile()
     {
-        List<Double> closingPrices = FileHelper.getClosingPrices( new File( "test-classes/testingFile.csv" ));
+        List<Double> closingPrices = FileHelper.getClosingPrices( ResourceHelper.getInstance().getResource("testingFile.csv" ));
         double[] dailyReturns=VarUtils.computeDailyReturns(closingPrices);
         assertTrue( closingPrices.size()-1 == dailyReturns.length );
         assertEquals("Invalid daily return [0]",-0.0198,dailyReturns[0],0.0001);
@@ -27,7 +27,7 @@ public class VarUtils_UnitTest
     @Test
     public void shouldReturnCorrectNumberOfReturnsFromMSFTFile()
     {
-        List<Double> closingPrices = FileHelper.getClosingPrices( new File( "test-classes/MSFT_15082013_15112013.csv" ));
+        List<Double> closingPrices = FileHelper.getClosingPrices( ResourceHelper.getInstance().getResource("MSFT_15082013_15112013.csv" ));
         double[] dailyReturns=VarUtils.computeDailyReturns(closingPrices);
         assertTrue( closingPrices.size()-1 == dailyReturns.length );
     }
@@ -77,8 +77,8 @@ public class VarUtils_UnitTest
     @Test
     public void shouldComputeCorrectVolatilityUsingStandardFormula()
     {
-        double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( new File(
-                                                                          "test-classes/GOOG_190913_181013.csv" ) ));
+        double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(
+                ResourceHelper.getInstance().getResource("GOOG_190913_181013.csv" ) ));
         double computedVolatility = VarUtils.computeVolatility_Standard( returnsFromFile );
         double expectedVolatility = 0.0298958;
         assertEquals( expectedVolatility, computedVolatility, delta );
@@ -87,8 +87,8 @@ public class VarUtils_UnitTest
     @Test
     public void shouldComputeCorrectVolatilityUsingEWMA()
     {
-        double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( new File(
-                                                                          "test-classes/GOOG_190913_181013.csv" ) ));
+        double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(
+                ResourceHelper.getInstance().getResource("GOOG_190913_181013.csv" ) ));
         double computedVolatility = VarUtils.computeVolatility_EWMA( returnsFromFile );
         double expectedVolatility = 0.06011;
         assertEquals( expectedVolatility, computedVolatility, delta );
@@ -97,8 +97,8 @@ public class VarUtils_UnitTest
     @Test
     public void shouldComputeCorrectVolatilityUsingGARCH()
     {
-        double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( new File(
-                                                                          "test-classes/GOOG_190913_181013.csv" ) ));
+        double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(
+                ResourceHelper.getInstance().getResource("GOOG_190913_181013.csv" ) ));
         double computedVolatility = VarUtils.computeVolatility_GARCH( returnsFromFile );
         double expectedVolatility = 0.04019688;
         assertEquals( expectedVolatility, computedVolatility, delta );

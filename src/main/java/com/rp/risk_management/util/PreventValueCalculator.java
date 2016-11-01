@@ -1,4 +1,4 @@
-package com.rp.risk_management.analytics.util;
+package com.rp.risk_management.util;
 
 import com.rp.risk_management.analytics.portfolio.VarUtils;
 

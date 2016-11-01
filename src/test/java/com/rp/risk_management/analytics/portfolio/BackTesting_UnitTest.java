@@ -26,7 +26,7 @@ public class BackTesting_UnitTest
         portfolioValues.add( msftInvestment );
         Asset msft = new Asset( prevStockData, "MSFT", msftInvestment );
         Portfolio portfolio = new Portfolio(Collections.singletonList(msft),null);
-        //portfolio.addAsset( msft );
+
         return portfolio;
     }
 

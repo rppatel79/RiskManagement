@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rp.risk_management.model.Portfolio;
+import com.rp.risk_management.util.ResourceHelper;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
@@ -39,8 +40,8 @@ public class HistoricalSimulation_UnitTest extends TestCase
         stockValues.add( 1000.0 );
         stockValues.add( 2000.0 );
         stockDataFiles.clear();
-        stockDataFiles.add( new File( "test-classes/GOOG_Tester.csv" ) );
-        stockDataFiles.add( new File( "test-classes/MSFT_15082013_15112013.csv" ) );
+        stockDataFiles.add( ResourceHelper.getInstance().getResource("GOOG_Tester.csv" ) );
+        stockDataFiles.add( ResourceHelper.getInstance().getResource("MSFT_15082013_15112013.csv" ) );
         confidence = 99;
         hs = new HistoricalSimulation( new Portfolio(null, stockDataFiles, stockValues), confidence );
 
@@ -55,9 +56,9 @@ public class HistoricalSimulation_UnitTest extends TestCase
         stockValues.add( 1500.0 );
         stockValues.add( 2000.0 );
         stockDataFiles.clear();
-        stockDataFiles.add( new File( "test-classes/GOOG_Tester.csv" ) );
-        stockDataFiles.add( new File( "test-classes/GOOG_190913_181013.csv" ) );
-        stockDataFiles.add( new File( "test-classes/MSFT_15082013_15112013.csv" ) );
+        stockDataFiles.add( ResourceHelper.getInstance().getResource( "GOOG_Tester.csv" ) );
+        stockDataFiles.add( ResourceHelper.getInstance().getResource( "GOOG_190913_181013.csv" ) );
+        stockDataFiles.add( ResourceHelper.getInstance().getResource( "MSFT_15082013_15112013.csv" ) );
         confidence = 99;
 
         hs = new HistoricalSimulation( new Portfolio(null, stockDataFiles, stockValues), confidence );
@@ -71,7 +72,7 @@ public class HistoricalSimulation_UnitTest extends TestCase
                                               final int confidence )
     {
         stockDataFiles.clear();
-        stockDataFiles.add( new File( "test-classes/GOOG_Tester.csv" ) );
+        stockDataFiles.add( ResourceHelper.getInstance().getResource( "GOOG_Tester.csv" ) );
         hs = new HistoricalSimulation( new Portfolio(null, stockDataFiles, portfolioValues),
                                        confidence );
     }

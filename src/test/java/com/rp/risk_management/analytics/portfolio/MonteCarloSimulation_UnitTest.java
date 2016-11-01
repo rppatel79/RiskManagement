@@ -3,13 +3,13 @@ package com.rp.risk_management.analytics.portfolio;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.rp.risk_management.analytics.simulation.MonteCarlo;
 import com.rp.risk_management.model.Asset;
 import com.rp.risk_management.model.Portfolio;
+import com.rp.risk_management.util.ResourceHelper;
 import org.junit.Test;
 
 public class MonteCarloSimulation_UnitTest
@@ -24,13 +24,13 @@ public class MonteCarloSimulation_UnitTest
         List<Asset> stockPortfolio = new ArrayList<>();
         {
             Asset asset = new Asset();
-            asset.setData(new File("test-classes/APPLE.csv" ));
+            asset.setData(ResourceHelper.getInstance().getResource("APPLE.csv" ));
             asset.setInvestment(1000.0);
             stockPortfolio.add(asset);
         }
         {
             Asset asset = new Asset();
-            asset.setData(new File("test-classes/MSFT_15082013_15112013.csv"));
+            asset.setData(ResourceHelper.getInstance().getResource("MSFT_15082013_15112013.csv"));
             asset.setInvestment(2000.0);
             stockPortfolio.add(asset);
         }
@@ -52,10 +52,10 @@ public class MonteCarloSimulation_UnitTest
         }
 
         MonteCarloSimulation sim = new MonteCarloSimulation(portfolio,99, 10);
-        MonteCarloSimulation.MonteCarloResults results =sim.computeValueAtRisk(simulation);//TODO
+        MonteCarloSimulation.MonteCarloResults results =sim.computeValueAtRiskForPortfolio(simulation);//TODO
         assertTrue( results.maximumVaR >= results.finalVaR);
-        assertEquals("final risk_management",3000-(-8.8612843164656),results.finalVaR,0.001);
-        assertEquals("max risk_management",3000-(-8.8612843164656),results.maximumVaR,0.001);
+        assertEquals("final risk_management",-(8.8612843164656),results.finalVaR,0.001);
+        assertEquals("max risk_management",-(8.8612843164656),results.maximumVaR,0.001);
     }
 
 }

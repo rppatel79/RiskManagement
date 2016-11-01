@@ -41,7 +41,7 @@ public class BackTesting
                 ret=backTestHistoricalSimulation();
                 break;
             case VarUtils.MC:
-                ret=backTestMonteCarloSimulation();
+                ret=backTestMonteCarloSimulation(null);//todo
                 break;
             default:
                 throw new IllegalArgumentException("Unable to find model ["+model+"]");
@@ -74,14 +74,12 @@ public class BackTesting
                                                      portfolio.getAssetsValue() );
     }
 
-    private BackTestingResults backTestMonteCarloSimulation()
+    private BackTestingResults backTestMonteCarloSimulation(double[][] stockValues)
     {
-        //output += "Backtesting Monte Carlo Simulation:\n";
-
         MonteCarloSimulation mc = new MonteCarloSimulation( portfolio, confidence, 1 );
         double[] allReturns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( portfolio.getStockPriceDataFiles()
                                                                     .get( 0 ) ));
-        double[] estimations = mc.estimateVaRForBacktesting_OneStock( numberOfDaysToTest );
+        double[] estimations = mc.estimateVaRForBacktesting_OneStock( numberOfDaysToTest, stockValues );
         int position = allReturns.length - 1 - numberOfDaysToTest;
         return compareEstimationsWithActualLosses_OneStock( estimations, allReturns, position,
                                                      portfolio.getAssetsValue() );

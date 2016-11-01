@@ -2,7 +2,7 @@ package com.rp.risk_management.analytics.security.options.monte_carlo;
 
 import com.rp.risk_management.analytics.portfolio.MonteCarloSimulation;
 import com.rp.risk_management.analytics.security.options.OptionPricer;
-import com.rp.risk_management.analytics.util.PreventValueCalculator;
+import com.rp.risk_management.util.PreventValueCalculator;
 import com.rp.risk_management.model.Option;
 import org.apache.commons.math3.stat.StatUtils;
 

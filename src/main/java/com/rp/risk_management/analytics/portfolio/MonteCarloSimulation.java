@@ -84,53 +84,52 @@ public class MonteCarloSimulation
      * @param allSimulatedReturns Length of allSimulatedReturns must be <code>numberOfSimulations</code> and the length of each element must be <code>portfolio.size()</code>
      * @return an array containing final and max VaRs.
      */
-    private MonteCarloResults computeValueAtRiskForPortfolio(List<com.rp.risk_management.analytics.simulation.MonteCarlo.SimulationResults> allSimulatedReturns)
+    public MonteCarloResults computeValueAtRiskForPortfolio(List<com.rp.risk_management.analytics.simulation.MonteCarlo.SimulationResults> allSimulatedReturns)
     {
         double initialPortFolioValue = 0.0;
         double finalPortfolioValue = 0.0;
+
+        MonteCarloResults monteCarloResults= computeForMultipleStocks( this.portfolioValues,allSimulatedReturns);
+        double optionsFinalValue = 0.0, optionsMinValue = 0.0;
         // take initial values of investments and options
         double initialOptionsValue = 0.0;
 
-        List<Option> options = portfolio.getOptions();
+        if (portfolio.getOptions() != null) {
+            List<Option> options = portfolio.getOptions();
 
-        for( Option option : options )
-        {
-            initialOptionsValue += ( option.getInitialStockPrice() * option.getNumShares() );
-        }
 
-        initialPortFolioValue = VarUtils.sumOf( portfolio.getInvestments() ) + initialOptionsValue;
 
-        MonteCarloResults monteCarloResults= computeForMultipleStocks( this.portfolioValues,allSimulatedReturns);
+            for (Option option : portfolio.getOptions()) {
+                initialOptionsValue += (option.getInitialStockPrice() * option.getNumShares());
+            }
 
-        double optionsFinalValue = 0.0, optionsMinValue = 0.0;
-        for( Option o : options )
-        {
-            double[] finalMinPrices = new double[2];
-            switch( o.getOptionStyle() )
-            {
-                case European:
-                    MonteCarloBlackScholes monteCarloBlackScholes = new MonteCarloBlackScholes(o);
-                    optionsFinalValue += monteCarloBlackScholes.getMonteCarloResults().finalValueOfOption_;
-                    optionsMinValue += monteCarloBlackScholes.getMonteCarloResults().minValueOfOption_;
-                    break;
-                case American:
-                    MonteCarloBinomialTree monteCarloBinomialTree = new MonteCarloBinomialTree(o);
-                    optionsFinalValue += monteCarloBinomialTree.getMonteCarloResults().finalValueOfOption_;
-                    optionsMinValue += monteCarloBinomialTree.getMonteCarloResults().minValueOfOption_;
-                    break;
-                default:
-                    MonteCarlo monteCarlo = new MonteCarlo(o);
-                    optionsFinalValue += monteCarlo.getMonteCarloResults().finalValueOfOption_;
-                    optionsMinValue += monteCarlo.getMonteCarloResults().minValueOfOption_;
-                    break;
+            for (Option o : options) {
+                double[] finalMinPrices = new double[2];
+                switch (o.getOptionStyle()) {
+                    case European:
+                        MonteCarloBlackScholes monteCarloBlackScholes = new MonteCarloBlackScholes(o);
+                        optionsFinalValue += monteCarloBlackScholes.getMonteCarloResults().finalValueOfOption_;
+                        optionsMinValue += monteCarloBlackScholes.getMonteCarloResults().minValueOfOption_;
+                        break;
+                    case American:
+                        MonteCarloBinomialTree monteCarloBinomialTree = new MonteCarloBinomialTree(o);
+                        optionsFinalValue += monteCarloBinomialTree.getMonteCarloResults().finalValueOfOption_;
+                        optionsMinValue += monteCarloBinomialTree.getMonteCarloResults().minValueOfOption_;
+                        break;
+                    default:
+                        MonteCarlo monteCarlo = new MonteCarlo(o);
+                        optionsFinalValue += monteCarlo.getMonteCarloResults().finalValueOfOption_;
+                        optionsMinValue += monteCarlo.getMonteCarloResults().minValueOfOption_;
+                        break;
+                }
             }
         }
 
+        initialPortFolioValue = VarUtils.sumOf(portfolio.getInvestments()) + initialOptionsValue;
         finalPortfolioValue = monteCarloResults.finalVaR + optionsFinalValue;
         double minPortfolioValue = monteCarloResults.maximumVaR + optionsMinValue;
         double finalVaR = initialPortFolioValue - finalPortfolioValue;
         double maxVaR = initialPortFolioValue - minPortfolioValue;
-        //double[] finalMaxVaR = { Math.round( finalVaR ), Math.round( maxVaR ) };
 
         return new MonteCarloResults(finalVaR, maxVaR);
     }
@@ -140,15 +139,14 @@ public class MonteCarloSimulation
      * assets in the portfolio.
      * @param allSimulatedReturns Length of allSimulatedReturns must be <code>numberOfSimulations</code> and the length of each element must be <code>portfolio.size()</code>
     */
-    MonteCarloResults computeValueAtRisk(List<com.rp.risk_management.analytics.simulation.MonteCarlo.SimulationResults> allSimulatedReturns)
+    private MonteCarloResults computeValueAtRisk(List<com.rp.risk_management.analytics.simulation.MonteCarlo.SimulationResults> allSimulatedReturns)
     {
         MonteCarloResults ret = null;
         if( numberOfStocks == 1 )
         {
             double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper
                                                .getClosingPrices( stockPriceDataFiles.get( 0 ) ));
-            double volatility = VarUtils
-                                        .computeVolatility_EWMA( returnsFromFile );
+            double volatility = VarUtils.computeVolatility_EWMA( returnsFromFile );
             ret = computeForOneStock( portfolioValues.get( 0 ), volatility );
         }
         else
@@ -167,6 +165,12 @@ public class MonteCarloSimulation
         return computeValueAtRisk(null);
     }
 
+    private MonteCarloResults computeForOneStock( double stockValue, double volatility)
+    {
+        return computeForOneStock(stockValue,volatility,
+            com.rp.risk_management.analytics.simulation.MonteCarlo.simulatePrices( stockValue, volatility, numberOfSimulations, timePeriod ));
+    }
+
     /**
      * Computes the VaR for one stock using its value and volatility to run the Monte Carlo
      * simulation.
@@ -175,10 +179,17 @@ public class MonteCarloSimulation
      * @param volatility
      * @return array containing final and max vars
      */
-    private MonteCarloResults computeForOneStock( double stockValue, double volatility )
+    private MonteCarloResults computeForOneStock( double stockValue, double volatility, double[][] stockValues )
     {
-        double[][] stockValues = com.rp.risk_management.analytics.simulation.MonteCarlo.simulatePrices( stockValue, volatility, numberOfSimulations, timePeriod );
-
+        if (stockValues != null)
+        {
+            assert stockValues.length == numberOfSimulations;
+            for (int i = 0; i < stockValues.length; i++)
+                assert stockValues[i].length == timePeriod;
+        }
+        else {
+            stockValues = com.rp.risk_management.analytics.simulation.MonteCarlo.simulatePrices(stockValue, volatility, numberOfSimulations, timePeriod);
+        }
         double[] finalValues = new double[numberOfSimulations];
         double[] maximumLosses = new double[numberOfSimulations];
         for( int sim = 0 ; sim < numberOfSimulations ; sim++ )
@@ -331,7 +342,7 @@ public class MonteCarloSimulation
      * @return array containing estimations of VaR for each day until the target number
      * @deprecated
      */
-    double[] estimateVaRForBacktesting_OneStock( int numberOfDaysToTest )
+    double[] estimateVaRForBacktesting_OneStock( int numberOfDaysToTest, double[][] stockValues )
     {
         double[] estimations = new double[numberOfDaysToTest];
         double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( stockPriceDataFiles.get( 0 ) ));
@@ -341,7 +352,7 @@ public class MonteCarloSimulation
         {
             double[] returnsToUse = Arrays.copyOf( returns, numberOfReturnsToUse );
             double volatility = VarUtils.computeVolatility_GARCH( returnsToUse );
-            MonteCarloResults monteCarloResults = computeForOneStock( portfolioValues.get( 0 ), volatility );
+            MonteCarloResults monteCarloResults = computeForOneStock( portfolioValues.get( 0 ), volatility, stockValues );
             estimations[day] = monteCarloResults.finalVaR;
             numberOfReturnsToUse++;
         }
