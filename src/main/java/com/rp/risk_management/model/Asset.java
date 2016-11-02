@@ -25,26 +25,11 @@ public class Asset
 
 
     /**
-     * Black constructor.
-     */
-    public Asset()
-    {
-    }
-
-    /**
      * @return the historical price data for this asset
      */
     public File getData()
     {
         return data;
-    }
-
-    /**
-     * @param data the historical price data to set
-     */
-    public void setData( File data )
-    {
-        this.data = data;
     }
 
     /**
@@ -55,13 +40,6 @@ public class Asset
         return ID;
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setID( String id )
-    {
-        ID = id;
-    }
 
     /**
      * @return the investment in this asset
@@ -71,12 +49,5 @@ public class Asset
         return investment;
     }
 
-    /**
-     * @param investment the investment to set
-     */
-    public void setInvestment( double investment )
-    {
-        this.investment = investment;
-    }
 
 }

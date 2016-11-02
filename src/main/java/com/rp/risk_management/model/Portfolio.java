@@ -94,11 +94,6 @@ public class Portfolio
         return stockPriceDataFiles;
     }
 
-    public List<Double> getClosingPrices(int idx)
-    {
-        return FileHelper.getClosingPrices(stockPriceDataFiles.get(idx));
-    }
-
     public double[] getReturns( int idx )
     {
         return VarUtils.computeDailyReturns(FileHelper.getClosingPrices(stockPriceDataFiles.get(idx)));
@@ -119,14 +114,6 @@ public class Portfolio
     }
 
     /**
-     * @param investments the investments to set
-     */
-    public void setInvestments( List<Double> investments )
-    {
-        this.investments = investments;
-    }
-
-    /**
      * Returns the total value of the investments within the portfolio.
      */
     public double getAssetsValue()
@@ -140,20 +127,4 @@ public class Portfolio
         return sum;
     }
 
-    /**
-     * @return the name of the portfolio
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * Set name of this portfolio.
-     * @param name the name to set
-     */
-    public void setName( String name )
-    {
-        this.name = name;
-    }
 }

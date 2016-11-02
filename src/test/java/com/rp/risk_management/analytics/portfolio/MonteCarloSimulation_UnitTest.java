@@ -23,15 +23,11 @@ public class MonteCarloSimulation_UnitTest
     {
         List<Asset> stockPortfolio = new ArrayList<>();
         {
-            Asset asset = new Asset();
-            asset.setData(ResourceHelper.getInstance().getResource("APPLE.csv" ));
-            asset.setInvestment(1000.0);
+            Asset asset = new Asset(ResourceHelper.getInstance().getResource("APPLE.csv" ),"Apple",1000.0);
             stockPortfolio.add(asset);
         }
         {
-            Asset asset = new Asset();
-            asset.setData(ResourceHelper.getInstance().getResource("MSFT_15082013_15112013.csv"));
-            asset.setInvestment(2000.0);
+            Asset asset = new Asset(ResourceHelper.getInstance().getResource("MSFT_15082013_15112013.csv"),"MSFT",2000.0);
             stockPortfolio.add(asset);
         }
         Portfolio portfolio = new Portfolio(stockPortfolio,null);
