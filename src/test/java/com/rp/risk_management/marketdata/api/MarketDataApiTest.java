@@ -16,18 +16,18 @@ public class MarketDataApiTest {
     }
 
     @Test
-    public void testGetQuote() throws Exception {
+    public void testGetQuoteVsQuotes() throws Exception {
         MarketDataApi marketDataApi = new YahooMarketDataApi();
 
         Stock stock = new Stock("AAPL");
         SimpleDate startDate = new SimpleDate(2015, 11, 3);
         SimpleDate endDate = new SimpleDate(2015, 11, 4);
 
-        List<Quote> quotes = marketDataApi.getMarketData(stock,startDate,endDate);
+        List<Quote> quotes = marketDataApi.getMarketData(stock, startDate, endDate);
 
         Quote quote;
         {
-            Assert.assertEquals(1,quotes.size());
+            Assert.assertEquals(1, quotes.size());
             quote = quotes.get(0);
             Assert.assertEquals(stock, quote.getStock());
             Assert.assertEquals(startDate, quote.getSimpleDate());
@@ -38,7 +38,19 @@ public class MarketDataApiTest {
             Assert.assertEquals(119.03, quote.getClose().doubleValue(), 0.0001);
             Assert.assertEquals(7.85617E7, quote.getVolume().doubleValue(), 0.0001);
         }
-        Quote quote2 = marketDataApi.getMarketData(stock,startDate);
+        Quote quote2 = marketDataApi.getMarketData(stock, startDate);
         Assert.assertEquals(quote, quote2);
+    }
+
+    @Test
+   public void testGetQuotes() throws Exception {
+        MarketDataApi marketDataApi = new YahooMarketDataApi();
+
+        Stock stock = new Stock("AAPL");
+        SimpleDate startDate = new SimpleDate(2014, 11, 3);
+        SimpleDate endDate = new SimpleDate(2015, 11, 4);
+
+        List<Quote> quotes = marketDataApi.getMarketData(stock, startDate, endDate);
+        Assert.assertEquals(254, quotes.size());
     }
 }

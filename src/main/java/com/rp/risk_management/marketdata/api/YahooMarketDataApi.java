@@ -6,6 +6,7 @@ import com.rp.risk_management.util.date.SimpleDate;
 import com.rp.risk_management.util.date.SimpleDateHelper;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
+import yahoofinance.histquotes.Interval;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,9 +26,30 @@ public class YahooMarketDataApi implements MarketDataApi
     @Override
     public List<Quote> getMarketData(Stock stock,SimpleDate fromDate, SimpleDate toDate) throws Exception
     {
-        yahoofinance.Stock results = YahooFinance.get(stock.getStock(), fromDate.getCalendar(),toDate.getCalendar());
+        return getMarketData(stock,fromDate, toDate, Interval.DAILY);
+    }
+
+    @Override
+    public List<Quote> getMarketData(Stock stock,SimpleDate fromDate, SimpleDate toDate, Interval interval) throws Exception
+    {
+        yahoofinance.histquotes.Interval yahooInterval = convertInterval(interval);
+        yahoofinance.Stock results = YahooFinance.get(stock.getStock(), fromDate.getCalendar(),toDate.getCalendar(), yahooInterval);
 
         return getQuotes(stock, results);
+    }
+
+    private yahoofinance.histquotes.Interval convertInterval(Interval interval) {
+        switch (interval)
+        {
+            case DAILY:
+                return yahoofinance.histquotes.Interval.DAILY;
+            case MONTHLY:
+                return yahoofinance.histquotes.Interval.MONTHLY;
+            case WEEKLY:
+                return yahoofinance.histquotes.Interval.WEEKLY;
+            default:
+                throw new IllegalArgumentException("Unknown interval ["+interval+"]");
+        }
     }
 
     private List<Quote> getQuotes(Stock stock, yahoofinance.Stock results) throws IOException {
