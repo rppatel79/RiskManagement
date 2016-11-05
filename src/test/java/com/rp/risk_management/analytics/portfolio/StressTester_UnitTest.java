@@ -9,6 +9,7 @@ import java.util.List;
 import com.rp.risk_management.model.Asset;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.ResourceHelper;
+import com.rp.risk_management.util.SimpleDate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +50,8 @@ public class StressTester_UnitTest
     {
         List<Asset> assets = new ArrayList<>();
         assets.add(getTestAsset());
-        assets.add(new Asset( ResourceHelper.getInstance().getResource("APPLE.csv" ), "APPL", 2000.0 ));
+        assets.add(new Asset( ResourceHelper.getInstance().getResource("APPLE.csv" ), "APPL", 2000.0 ,
+                new SimpleDate(2013,3,7),new SimpleDate(2013,12,3)));
         Portfolio p = new Portfolio(assets,null);
 
 
@@ -98,7 +100,7 @@ public class StressTester_UnitTest
         ArrayList<Double> portfolioValues = new ArrayList<Double>();
         double msftInvestment = 1000.0;
         portfolioValues.add( msftInvestment );
-        Asset msft = new Asset( prevStockData, "MSFT", msftInvestment );
+        Asset msft = new Asset( prevStockData, "MSFT", msftInvestment ,new SimpleDate(2012,4,2),new SimpleDate(2013,4,1));
         return msft;
     }
 }

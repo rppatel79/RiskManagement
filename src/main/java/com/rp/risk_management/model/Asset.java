@@ -1,5 +1,7 @@
 package com.rp.risk_management.model;
 
+import com.rp.risk_management.util.SimpleDate;
+
 import java.io.File;
 
 /**
@@ -15,7 +17,9 @@ public class Asset
     /** Amount of money invested in the asset. */
     private double investment;
 
-    /** Constructor to initialise an asset. */
+    /** Constructor to initialise an asset.
+     * @deprecated
+     * */
     public Asset( File data, String iD, double investment )
     {
         this.data = data;
@@ -23,6 +27,15 @@ public class Asset
         this.investment = investment;
     }
 
+    /** Constructor to initialise an asset.
+     * */
+    public Asset(File data, String iD, double investment, SimpleDate startDate, SimpleDate endDate)
+    {
+
+        this.data = data;
+        ID = iD;
+        this.investment = investment;
+    }
 
     /**
      * @return the historical price data for this asset

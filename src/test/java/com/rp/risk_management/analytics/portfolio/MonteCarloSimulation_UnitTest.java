@@ -10,6 +10,7 @@ import com.rp.risk_management.analytics.simulation.MonteCarlo;
 import com.rp.risk_management.model.Asset;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.ResourceHelper;
+import com.rp.risk_management.util.SimpleDate;
 import org.junit.Test;
 
 public class MonteCarloSimulation_UnitTest
@@ -23,11 +24,13 @@ public class MonteCarloSimulation_UnitTest
     {
         List<Asset> stockPortfolio = new ArrayList<>();
         {
-            Asset asset = new Asset(ResourceHelper.getInstance().getResource("APPLE.csv" ),"Apple",1000.0);
+            Asset asset = new Asset(ResourceHelper.getInstance().getResource("APPLE.csv" ),"Apple",1000.0,
+                new SimpleDate(2013,3,7),new SimpleDate(2013,12,3));
             stockPortfolio.add(asset);
         }
         {
-            Asset asset = new Asset(ResourceHelper.getInstance().getResource("MSFT_15082013_15112013.csv"),"MSFT",2000.0);
+            Asset asset = new Asset(ResourceHelper.getInstance().getResource("MSFT_15082013_15112013.csv"),"MSFT",2000.0,
+                    new SimpleDate(2013,8,13),new SimpleDate(2013,11,15));
             stockPortfolio.add(asset);
         }
         Portfolio portfolio = new Portfolio(stockPortfolio,null);
