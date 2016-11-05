@@ -1,6 +1,6 @@
 package com.rp.risk_management.model;
 
-import com.rp.risk_management.util.SimpleDate;
+import com.rp.risk_management.util.date.SimpleDate;
 
 import java.io.File;
 

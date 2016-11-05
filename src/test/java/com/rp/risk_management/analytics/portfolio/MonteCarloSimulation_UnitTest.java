@@ -10,7 +10,7 @@ import com.rp.risk_management.analytics.simulation.MonteCarlo;
 import com.rp.risk_management.model.Asset;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.ResourceHelper;
-import com.rp.risk_management.util.SimpleDate;
+import com.rp.risk_management.util.date.SimpleDate;
 import org.junit.Test;
 
 public class MonteCarloSimulation_UnitTest

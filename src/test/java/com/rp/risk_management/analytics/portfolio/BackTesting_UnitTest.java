@@ -3,7 +3,7 @@ package com.rp.risk_management.analytics.portfolio;
 import com.rp.risk_management.model.Asset;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.ResourceHelper;
-import com.rp.risk_management.util.SimpleDate;
+import com.rp.risk_management.util.date.SimpleDate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
