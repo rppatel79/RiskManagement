@@ -52,10 +52,12 @@ public class BackTesting
 
     private BackTestingResults backTestModelBuilding()
     {
+        if (portfolio.getAssets().size() != 1 && portfolio.getOptions() != null)
+            throw new IllegalArgumentException("Only support for single stock within a portfolio");
+
         ModelBuilding mb = new ModelBuilding( portfolio, confidence, timePeriod );
 
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( PortfolioUtil.getStockQuotes(portfolio).get(0) ));
-        double[] estimations = mb.computeForBackTesting( returns, numberOfDaysToTest );
+        double[] estimations = mb.computeForBackTesting( numberOfDaysToTest );
         return compareEstimationsWithActualLosses_OneStock( estimations );
     }
 

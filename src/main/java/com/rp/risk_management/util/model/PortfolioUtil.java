@@ -11,8 +11,9 @@ import java.util.List;
 public class PortfolioUtil
 {
     /**
-     * @return the investments made in this portfolio.
+     *
      * @param portfolio
+     * @return the investments made in this portfolio.
      */
     public static List<Double> getAssetInvestment(Portfolio portfolio)
     {

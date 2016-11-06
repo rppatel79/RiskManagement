@@ -17,18 +17,19 @@ import java.util.List;
  */
 public class ModelBuilding
 {
+    private final Portfolio portfolio_;
     /** List of investments made. */
-    private List<Double> portfolioValues;
+    private final List<Double> portfolioValues;
     /** List of historical price quotes for assets in same order to investments. */
-    private List<List<Quote>> allStockQuotes_;
+    private final List<List<Quote>> allStockQuotes_;
     /** The confidence at which to getOptionPrice VaR. */
-    private int               confidence;
+    private final int               confidence;
     /** The time period to getOptionPrice VaR over. */
-    private int               timePeriod;
+    private final int               timePeriod;
     /** The number of standard deviations our risk is unlikely to exceed, affected by the confidence level. */
-    private double            zDelta;
+    private final double zDelta_;
     /** The number of assets currently held in this model. */
-    private int               numberOfStocks;
+    private final int               numberOfStocks;
 
     /**
      * Initialises a Model-Building VaR model using a portfolio.
@@ -38,12 +39,13 @@ public class ModelBuilding
      */
     public ModelBuilding(Portfolio p, int confidence, int timePeriod )
     {
+        portfolio_=p;
         this.confidence = confidence;
         this.timePeriod = timePeriod;
         this.portfolioValues = PortfolioUtil.getAssetInvestment(p);
         this.numberOfStocks = portfolioValues.size();
         this.allStockQuotes_ = PortfolioUtil.getStockQuotes(p);
-        computeZDelta();
+        zDelta_ = computeZDelta();
     }
 
     /**
@@ -64,7 +66,7 @@ public class ModelBuilding
 
         // VaR = stdDevUpperBound * volatilityOfPortfolio *
         // Math.sqrt(numberOfDays);
-        double VaR = zDelta * VarUtils.root( portfolioVariance )
+        double VaR = zDelta_ * VarUtils.root( portfolioVariance )
                      * VarUtils.root( timePeriod );
 
         return VaR;
@@ -98,12 +100,15 @@ public class ModelBuilding
     /**
      * For one stock in portfolio.
      * Use the returns until current day to estimate volatility and thus the VaR for next day.
-     * @param returns
      * @param numberOfDaysToTest
      * @return
      */
-    public double[] computeForBackTesting( double[] returns, int numberOfDaysToTest )
+    public double[] computeForBackTesting( int numberOfDaysToTest )
     {
+        if (portfolio_.getAssets().size() != 1 && portfolio_.getOptions() !=null)
+            throw new IllegalArgumentException("Only support for a single non-option asset.");
+        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( PortfolioUtil.getStockQuotes(portfolio_).get(0) ));
+
         int numberOfReturnsToUse = returns.length - 1 - numberOfDaysToTest;
         double portfolioValue = portfolioValues.get( 0 );
         double[] estimations = new double[numberOfDaysToTest];
@@ -129,7 +134,7 @@ public class ModelBuilding
     {
         double VaR = 0.0;
         double stdDevDailyValueChange = volatility * portfolioValue;
-        double oneDayVaR = zDelta * stdDevDailyValueChange;
+        double oneDayVaR = zDelta_ * stdDevDailyValueChange;
         VaR = oneDayVaR * Math.sqrt( timePeriod );
         return VaR;
     }
@@ -138,8 +143,6 @@ public class ModelBuilding
      * Computes Value at Risk for two stocks using pre-defined volatilities and
      * covariances.
      * 
-     * @param value1
-     * @param value2
      * @param dailyVolatility1
      * @param dailyVolatility2
      * @param covariance
@@ -154,46 +157,37 @@ public class ModelBuilding
         double VaR = VarUtils.root( VarUtils.square( stdDevChange1 )
                                     + VarUtils.square( stdDevChange2 ) + 2 * covariance
                                     * stdDevChange1 * stdDevChange2 )
-                     * zDelta * VarUtils.root( timePeriod );
+                     * zDelta_ * VarUtils.root( timePeriod );
         return VaR;
     }
     
     /**
-     * Computes the zDelta for the confidence level provided.
+     * Computes the zDelta_ for the confidence level provided.
      */
-    private void computeZDelta()
+    private double computeZDelta()
     {
         switch( confidence )
         {
             case 99:
-                zDelta = 2.33;
-                break;
+                return 2.33;
             case 98:
-                zDelta = 2.05;
-                break;
+                return 2.05;
             case 97:
-                zDelta = 1.88;
-                break;
+                return 1.88;
             case 96:
-                zDelta = 1.75;
-                break;
+                return 1.75;
             case 95:
-                zDelta = 1.65;
-                break;
+                return 1.65;
             case 90:
-                zDelta = 1.29;
-                break;
+                return 1.29;
             case 85:
-                zDelta = 1.04;
-                break;
+                return 1.04;
             case 80:
-                zDelta = 0.84;
-                break;
+                return 0.84;
             case 75:
-                zDelta = 0.68;
-                break;
+                return 0.68;
             default:
-                throw new IllegalArgumentException("Unable to convert confidence of ["+confidence+"] to zDelta");
+                throw new IllegalArgumentException("Unable to convert confidence of ["+confidence+"] to zDelta_");
         }
 
     }
