@@ -35,12 +35,12 @@ public class Asset
     /**
      * @return the investment in this asset
      */
-    double getInvestment()
+    public double getInvestment()
     {
         return investment;
     }
 
-    List<Quote> getQuotes() {
+    public List<Quote> getQuotes() {
         return quotes_;
     }
 }

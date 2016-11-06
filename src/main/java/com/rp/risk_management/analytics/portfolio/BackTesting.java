@@ -2,8 +2,8 @@ package com.rp.risk_management.analytics.portfolio;
 
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.model.PortfolioUtil;
 
-import java.io.File;
 import java.util.Arrays;
 /**
  * Runs a backtesting routine on a user-defined setup.
@@ -52,14 +52,11 @@ public class BackTesting
 
     private BackTestingResults backTestModelBuilding()
     {
-        //output += "Backtesting Model Building:\n";
         ModelBuilding mb = new ModelBuilding( portfolio, confidence, timePeriod );
 
-        double value = portfolio.getInvestments().get(0);
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( portfolio.getStockQuotes().get(0) ));
-        int position = returns.length - 1 - numberOfDaysToTest;
+        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( PortfolioUtil.getStockQuotes(portfolio).get(0) ));
         double[] estimations = mb.computeForBackTesting( returns, numberOfDaysToTest );
-        return compareEstimationsWithActualLosses_OneStock( estimations, returns, position, value );
+        return compareEstimationsWithActualLosses_OneStock( estimations );
     }
 
     private BackTestingResults backTestHistoricalSimulation()
@@ -67,36 +64,30 @@ public class BackTesting
         HistoricalSimulation hs = new HistoricalSimulation( portfolio, confidence, timePeriod );
 
         double[] estimations = hs.estimateVaRForBackTestingOneStock( numberOfDaysToTest );
-        double[] allReturns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( portfolio.getStockQuotes()
-                                                                    .get( 0 ) ));
-        int position = allReturns.length - 1 - numberOfDaysToTest;
-        return compareEstimationsWithActualLosses_OneStock( estimations, allReturns, position,
-                                                     portfolio.getAssetsValue() );
+        return compareEstimationsWithActualLosses_OneStock( estimations );
     }
 
     private BackTestingResults backTestMonteCarloSimulation(double[][] stockValues)
     {
         MonteCarloSimulation mc = new MonteCarloSimulation( portfolio, confidence, 1 );
-        double[] allReturns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( portfolio.getStockQuotes()
-                                                                    .get( 0 ) ));
         double[] estimations = mc.estimateVaRForBacktesting_OneStock( numberOfDaysToTest, stockValues );
-        int position = allReturns.length - 1 - numberOfDaysToTest;
-        return compareEstimationsWithActualLosses_OneStock( estimations, allReturns, position,
-                                                     portfolio.getAssetsValue() );
+        return compareEstimationsWithActualLosses_OneStock( estimations);
 
     }
 
     /**
      * Compares estimation of VaR with actual losses and updates the result.
      * @param estimations VaR estimations to test
-     * @param allReturns complete series of returns of stock data
-     * @param dayToStart day to start comparing VaR and actual losses from returns
-     * @param initialValue of the asset
      */
-    private BackTestingResults compareEstimationsWithActualLosses_OneStock( double[] estimations,
-                                                              double[] allReturns, int dayToStart,
-                                                              double initialValue )
+    private BackTestingResults compareEstimationsWithActualLosses_OneStock(double[] estimations)
     {
+        if (portfolio.getAssets().size() != 1 && portfolio.getOptions() != null)
+            throw new IllegalArgumentException("Only support for single stock within a portfolio");
+
+        double initialValue = PortfolioUtil.getAssetInvestment(portfolio).get(0);
+        double[] allReturns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( PortfolioUtil.getStockQuotes(portfolio).get(0) ));
+        int dayToStart = allReturns.length - 1 - numberOfDaysToTest;
+
         int position = dayToStart;
         int numberOfExceptions = 0;
         double[] returnsToUse = Arrays.copyOfRange( allReturns, position, allReturns.length - 1 );

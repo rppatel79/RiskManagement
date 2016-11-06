@@ -1,6 +1,7 @@
 package com.rp.risk_management.analytics.portfolio;
 
 import com.rp.risk_management.model.Portfolio;
+import com.rp.risk_management.util.model.PortfolioUtil;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -86,7 +87,7 @@ public class StressTester
      */
     private void buildOutput()
     {
-        output = "Original portfolio value: " + portfolio.getAssetsValue() + "\n";
+        output = "Original portfolio value: " + PortfolioUtil.getAssetsValue(portfolio) + "\n";
         Arrays.sort( simulatedValues );
         Arrays.sort( losses );
         double minValue = simulatedValues[0];
@@ -106,7 +107,7 @@ public class StressTester
      */
     private void simulateCrashAndRecordLosses(double[] dailyUpOrDown)
     {
-        double initialValue = VarUtils.sumOf( portfolio.getInvestments() );
+        double initialValue = VarUtils.sumOf( PortfolioUtil.getAssetInvestment(portfolio) );
         simulatedValues = new double[totalDays];
         losses = new double[totalDays];
         simulatedValues[0] = initialValue;

@@ -6,8 +6,8 @@ package com.rp.risk_management.analytics.portfolio;
 import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.model.PortfolioUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,9 +40,9 @@ public class ModelBuilding
     {
         this.confidence = confidence;
         this.timePeriod = timePeriod;
-        this.portfolioValues = p.getInvestments();
+        this.portfolioValues = PortfolioUtil.getAssetInvestment(p);
         this.numberOfStocks = portfolioValues.size();
-        this.allStockQuotes_ = p.getStockQuotes();
+        this.allStockQuotes_ = PortfolioUtil.getStockQuotes(p);
         computeZDelta();
     }
 

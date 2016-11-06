@@ -10,6 +10,7 @@ import com.rp.risk_management.analytics.security.options.OptionPricer;
 import com.rp.risk_management.model.Option;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.model.PortfolioUtil;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class HistoricalSimulation
     public HistoricalSimulation( Portfolio portfolio, int confidence, int varHorizon )
     {
         this.portfolio = portfolio;
-        this.portfolioValues = portfolio.getInvestments();
+        this.portfolioValues = PortfolioUtil.getAssetInvestment(portfolio);
         this.confidence = confidence;
         this.varHorizon= varHorizon;
     }
@@ -65,7 +66,7 @@ public class HistoricalSimulation
         else
         {
 
-            List<double[]> portfolioReturns = portfolio.getReturns();
+            List<double[]> portfolioReturns = PortfolioUtil.getReturns(portfolio);
 
             /*
              * System.out.println( "Historical Simulation VaR (" + portfolioValues.size()
@@ -100,7 +101,7 @@ public class HistoricalSimulation
      */
     private double computeValueAtRisk_OneStock()
     {
-        double[] returns = portfolio.getReturns( 0 );
+        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(PortfolioUtil.getStockQuotes(portfolio).get(0)));
         return getVaROneStock( returns );
     }
     
@@ -178,7 +179,7 @@ public class HistoricalSimulation
         double initialPortFolioValue = 0.0;
         double finalPortfolioValue = 0.0;
 
-        List<Double> investments = portfolio.getInvestments();
+        List<Double> investments = PortfolioUtil.getAssetInvestment(portfolio);
 
         double initialOptionsValue = 0.0;
 
@@ -193,7 +194,7 @@ public class HistoricalSimulation
 
         /***************** STOCKS *********************/
         // use previous functionality to getOptionPrice final prices of the portfolio and options
-        List<double[]> portfolioReturns = FileHelper.getReturnsFromQuotes( portfolio.getStockQuotes() );
+        List<double[]> portfolioReturns = FileHelper.getReturnsFromQuotes( PortfolioUtil.getStockQuotes(portfolio) );
         int numberOfStocks = portfolioReturns.size();
 
         // should be the smallest of the lengths of the array of returns.
@@ -330,7 +331,7 @@ public class HistoricalSimulation
      */
     public double[] estimateVaRForBackTestingOneStock( int numberOfDaysToTest )
     {
-        double[] returns = portfolio.getReturns( 0 );
+        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(PortfolioUtil.getStockQuotes(portfolio).get(0)));
         int numberOfReturnsToUse = returns.length - 1 - numberOfDaysToTest;
         double[] estimations = new double[numberOfDaysToTest];
 

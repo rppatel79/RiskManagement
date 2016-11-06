@@ -10,8 +10,8 @@ import com.rp.risk_management.analytics.simulation.MonteCarlo;
 import com.rp.risk_management.marketdata.model.Stock;
 import com.rp.risk_management.model.Asset;
 import com.rp.risk_management.model.Portfolio;
-import com.rp.risk_management.util.ResourceHelper;
 import com.rp.risk_management.util.date.SimpleDate;
+import com.rp.risk_management.util.model.PortfolioUtil;
 import org.junit.Test;
 
 public class MonteCarloSimulation_UnitTest
@@ -40,7 +40,7 @@ public class MonteCarloSimulation_UnitTest
 
         for (int i =0 ; i < MonteCarloSimulation.DEFAULT_NUMBER_OF_SIMULATIONS ; i++)
         {
-            int portfolioSize = portfolio.getInvestments().size();
+            int portfolioSize = PortfolioUtil.getAssetInvestment(portfolio).size();
             double[] minStockReturn = new double[portfolioSize];
             double[] finalStockReturn = new double[portfolioSize];
             for (int stockId = 0 ; stockId < portfolioSize ; stockId++) {

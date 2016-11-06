@@ -14,6 +14,7 @@ import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.model.Option;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.model.PortfolioUtil;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.log4j.Logger;
@@ -55,9 +56,9 @@ public class MonteCarloSimulation
      */
     public MonteCarloSimulation( Portfolio portfolio, int confidence, int timePeriod )
     {
-        this.allStockQuotes_ = portfolio.getStockQuotes();
+        this.allStockQuotes_ = PortfolioUtil.getStockQuotes(portfolio);
         this.portfolio = portfolio;
-        this.portfolioValues = portfolio.getInvestments();
+        this.portfolioValues = PortfolioUtil.getAssetInvestment(portfolio);
         this.confidence = confidence;
         this.numberOfStocks = portfolioValues.size();
         this.timePeriod = timePeriod;
@@ -118,7 +119,7 @@ public class MonteCarloSimulation
             }
         }
 
-        initialPortFolioValue = VarUtils.sumOf(portfolio.getInvestments()) + initialOptionsValue;
+        initialPortFolioValue = VarUtils.sumOf(PortfolioUtil.getAssetInvestment(portfolio)) + initialOptionsValue;
         finalPortfolioValue = monteCarloResults.finalVaR + optionsFinalValue;
         double minPortfolioValue = monteCarloResults.maximumVaR + optionsMinValue;
         double finalVaR = initialPortFolioValue - finalPortfolioValue;
@@ -318,7 +319,6 @@ public class MonteCarloSimulation
      * 
      * @param numberOfDaysToTest number of days to estimate VaR over
      * @return array containing estimations of VaR for each day until the target number
-     * @deprecated
      */
     double[] estimateVaRForBacktesting_OneStock( int numberOfDaysToTest, double[][] stockValues )
     {
