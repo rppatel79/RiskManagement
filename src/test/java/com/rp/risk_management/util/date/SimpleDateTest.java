@@ -18,5 +18,6 @@ public class SimpleDateTest {
 
         Assert.assertEquals(simpleDate1, new SimpleDate(calendar));
         Assert.assertEquals(simpleDate1, new SimpleDate(calendar.getTime()));
+        Assert.assertEquals("20151101",simpleDate1.getyyyymmdd());
     }
 }

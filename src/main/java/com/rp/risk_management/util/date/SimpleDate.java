@@ -7,8 +7,9 @@ import java.util.Date;
 
 public class SimpleDate implements Comparable<SimpleDate>
 {
-    private SimpleDateFormat simpleDateFormat_ = new SimpleDateFormat("yyyyMMdd");
+    public static final SimpleDateFormat simpleDateFormat_ = new SimpleDateFormat("yyyyMMdd");
 
+    private Object lock_ = new Object();
     private final Date date_;
     public SimpleDate(Date date)
     {
@@ -30,8 +31,8 @@ public class SimpleDate implements Comparable<SimpleDate>
     {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR,yyyy);
-        calendar.set(Calendar.MONTH,mm);
-        calendar.set(Calendar.DATE,dd);
+        calendar.set(Calendar.MONTH,mm-1);
+        calendar.set(Calendar.DAY_OF_MONTH,dd);
 
         // strip off time
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -81,7 +82,15 @@ public class SimpleDate implements Comparable<SimpleDate>
     @Override
     public String toString() {
         return "SimpleDate{" +
-                "date_=" + date_ +
+                "date_=" + getyyyymmdd() +
                 '}';
+    }
+
+    public String getyyyymmdd()
+    {
+        synchronized (lock_)
+        {
+            return simpleDateFormat_.format(date_);
+        }
     }
 }

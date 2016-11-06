@@ -20,26 +20,40 @@ public class MarketDataApiTest {
         MarketDataApi marketDataApi = new YahooMarketDataApi();
 
         Stock stock = new Stock("AAPL");
-        SimpleDate startDate = new SimpleDate(2015, 11, 3);
-        SimpleDate endDate = new SimpleDate(2015, 11, 4);
+        SimpleDate startDate = new SimpleDate(2016, 11, 3);
+        SimpleDate endDate = new SimpleDate(2016, 11, 4);
 
         List<Quote> quotes = marketDataApi.getMarketData(stock, startDate, endDate);
 
-        Quote quote;
+        Quote startDateQuote;
         {
-            Assert.assertEquals(1, quotes.size());
-            quote = quotes.get(0);
-            Assert.assertEquals(stock, quote.getStock());
-            Assert.assertEquals(startDate, quote.getSimpleDate());
-            Assert.assertEquals(116.439316, quote.getAdjClose().doubleValue(), 0.0001);
-            Assert.assertEquals(119.25, quote.getHigh().doubleValue(), 0.0001);
-            Assert.assertEquals(114.22, quote.getLow().doubleValue(), 0.0001);
-            Assert.assertEquals(116.55, quote.getOpen().doubleValue(), 0.0001);
-            Assert.assertEquals(119.03, quote.getClose().doubleValue(), 0.0001);
-            Assert.assertEquals(7.85617E7, quote.getVolume().doubleValue(), 0.0001);
+            Assert.assertEquals(2, quotes.size());
+
+            Quote endDateQuote = quotes.get(0);
+            startDateQuote = quotes.get(1);
+
+            Assert.assertEquals(stock, startDateQuote.getStock());
+            Assert.assertEquals(startDate, startDateQuote.getSimpleDate());
+            Assert.assertEquals(109.83, startDateQuote.getAdjClose().doubleValue(), 0.01);
+            Assert.assertEquals(111.46, startDateQuote.getHigh().doubleValue(), 0.01);
+            Assert.assertEquals(109.55, startDateQuote.getLow().doubleValue(), 0.01);
+            Assert.assertEquals(110.98, startDateQuote.getOpen().doubleValue(), 0.01);
+            Assert.assertEquals(109.83, startDateQuote.getClose().doubleValue(), 0.01);
+            Assert.assertEquals(26932600, startDateQuote.getVolume().doubleValue(), 0.01);
+
+
+            Assert.assertEquals(stock, endDateQuote.getStock());
+            Assert.assertEquals(endDate, endDateQuote.getSimpleDate());
+            Assert.assertEquals(108.834, endDateQuote.getAdjClose().doubleValue(), 0.01);
+            Assert.assertEquals(110.25, endDateQuote.getHigh().doubleValue(), 0.01);
+            Assert.assertEquals(108.11, endDateQuote.getLow().doubleValue(), 0.01);
+            Assert.assertEquals(108.53, endDateQuote.getOpen().doubleValue(), 0.01);
+            Assert.assertEquals(108.84, endDateQuote.getClose().doubleValue(), 0.01);
+            Assert.assertEquals(30666900, endDateQuote.getVolume().doubleValue(), 0.01);
+
         }
         Quote quote2 = marketDataApi.getMarketData(stock, startDate);
-        Assert.assertEquals(quote, quote2);
+        Assert.assertEquals(startDateQuote, quote2);
     }
 
     @Test
