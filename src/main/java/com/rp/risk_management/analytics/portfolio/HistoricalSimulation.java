@@ -193,7 +193,7 @@ public class HistoricalSimulation
 
         /***************** STOCKS *********************/
         // use previous functionality to getOptionPrice final prices of the portfolio and options
-        List<double[]> portfolioReturns = FileHelper.getReturnsFromFiles( portfolio.getStockPriceDataFiles() );
+        List<double[]> portfolioReturns = FileHelper.getReturnsFromQuotes( portfolio.getStockQuotes() );
         int numberOfStocks = portfolioReturns.size();
 
         // should be the smallest of the lengths of the array of returns.
@@ -256,7 +256,7 @@ public class HistoricalSimulation
     {
         double[] finalMinOptionsValue = new double[2];
         // get returns from file
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( option.getPriceData() ));
+        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( option.getUnderlyingPrices() ));
         int numberOfReturns = returns.length;
         List<Double> possibleOptionValues = new ArrayList<Double>();
         // getOptionPrice possible value change for each return in data

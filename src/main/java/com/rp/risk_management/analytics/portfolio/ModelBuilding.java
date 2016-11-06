@@ -3,6 +3,7 @@
  */
 package com.rp.risk_management.analytics.portfolio;
 
+import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.FileHelper;
 
@@ -18,8 +19,8 @@ public class ModelBuilding
 {
     /** List of investments made. */
     private List<Double> portfolioValues;
-    /** List of historical price data files for assets in same order to investments. */
-    private List<File> stockPriceDataFiles;
+    /** List of historical price quotes for assets in same order to investments. */
+    private List<List<Quote>> allStockQuotes_;
     /** The confidence at which to getOptionPrice VaR. */
     private int               confidence;
     /** The time period to getOptionPrice VaR over. */
@@ -41,24 +42,7 @@ public class ModelBuilding
         this.timePeriod = timePeriod;
         this.portfolioValues = p.getInvestments();
         this.numberOfStocks = portfolioValues.size();
-        stockPriceDataFiles = p.getStockPriceDataFiles();
-        computeZDelta();
-    }
-
-    /**
-     * Initialises a Model-Building VaR model using separate lists of assets and file.
-     * @param portfolioValues the investments made for assets in the portfolio
-     * @param confidence
-     * @param timePeriod
-     */
-    public ModelBuilding( List<Double> portfolioValues,
-                          List<File> stockPriceDataFiles, int confidence, int timePeriod )
-    {
-        this.portfolioValues = portfolioValues;
-        this.stockPriceDataFiles = stockPriceDataFiles;
-        this.confidence = confidence;
-        this.timePeriod = timePeriod;
-        this.numberOfStocks = portfolioValues.size();
+        this.allStockQuotes_ = p.getStockQuotes();
         computeZDelta();
     }
 
@@ -70,9 +54,9 @@ public class ModelBuilding
     {
         ArrayList<double[]> returnList = new ArrayList<double[]>();
 
-        for( File stockFile : stockPriceDataFiles )
+        for( List<Quote> stockQuotes : allStockQuotes_ )
         {
-            double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( stockFile ));
+            double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( stockQuotes ));
             returnList.add( returnsFromFile );
         }
 
@@ -179,13 +163,6 @@ public class ModelBuilding
      */
     private void computeZDelta()
     {
-        // 0 is default initialisation value of a Java int
-        if( confidence == 0 )
-        {
-            System.out.println( "Confidence level not set." );
-            return;
-        }
-
         switch( confidence )
         {
             case 99:
@@ -216,8 +193,7 @@ public class ModelBuilding
                 zDelta = 0.68;
                 break;
             default:
-                System.out.println( "zDelta not available" );
-                break;
+                throw new IllegalArgumentException("Unable to convert confidence of ["+confidence+"] to zDelta");
         }
 
     }

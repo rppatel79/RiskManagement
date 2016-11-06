@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rp.risk_management.analytics.simulation.MonteCarlo;
+import com.rp.risk_management.marketdata.model.Stock;
 import com.rp.risk_management.model.Asset;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.ResourceHelper;
@@ -20,17 +21,17 @@ public class MonteCarloSimulation_UnitTest
     }
 
     @Test
-    public void shouldReturnCorrectVARForTwoStocks()
+    public void shouldReturnCorrectVARForTwoStocks()throws Exception
     {
         List<Asset> stockPortfolio = new ArrayList<>();
         {
-            Asset asset = new Asset(ResourceHelper.getInstance().getResource("APPLE.csv" ),"Apple",1000.0,
-                new SimpleDate(2013,3,7),new SimpleDate(2013,12,3));
+            Asset asset = new Asset(new Stock("AAPL"),1000.0,
+                new SimpleDate(2013,3,7),new SimpleDate(2013,12,3));//ResourceHelper.getInstance().getResource("APPLE.csv" ),
             stockPortfolio.add(asset);
         }
         {
-            Asset asset = new Asset(ResourceHelper.getInstance().getResource("MSFT_15082013_15112013.csv"),"MSFT",2000.0,
-                    new SimpleDate(2013,8,13),new SimpleDate(2013,11,15));
+            Asset asset = new Asset(new Stock("MSFT"),2000.0,
+                    new SimpleDate(2013,8,13),new SimpleDate(2013,11,15));//ResourceHelper.getInstance().getResource("MSFT_15082013_15112013.csv")
             stockPortfolio.add(asset);
         }
         Portfolio portfolio = new Portfolio(stockPortfolio,null);

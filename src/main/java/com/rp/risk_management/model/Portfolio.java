@@ -4,6 +4,7 @@
 package com.rp.risk_management.model;
 
 import com.rp.risk_management.analytics.portfolio.VarUtils;
+import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.util.FileHelper;
 
 import java.io.File;
@@ -17,26 +18,13 @@ public class Portfolio
 {
     /** List of options held in this portfolio. */
     private List<Option> options;
-    /** List of historical stock data for the assets in this portfolio. */
-    private List<File>   stockPriceDataFiles;
+
+    private List<List<Quote>>   stockQuotes_;
+
     /** List of investments made in assets of this portfolio. */
     private List<Double> investments;
-    /** List of assets held in this portfolio. */
-    //private ArrayList<Asset>  assets;
-    /** Name of the portfolio for identification. */
-    private String            name = "";
-    
-    
-    /**
-     * Initialises a blank portfolio. Assets and options can be added later.
-     */
-    public Portfolio()
-    {
-        investments = new ArrayList<>();
-        stockPriceDataFiles = new ArrayList<>();
-        options = new ArrayList<>();
-    }
 
+    
     /**
      * Initialise a portfolio with a list of assets and options.
      * 
@@ -54,12 +42,13 @@ public class Portfolio
      * Initialise a portfolio using a list of options list of stock data and a list of investments.
      * 
      */
-    public Portfolio( List<Option> options, List<File> stockPriceData,
+    public Portfolio( List<Option> options, List<List<Quote>> stockPriceData,
                       List<Double> investments )
     {
         this.options = options;
-        this.stockPriceDataFiles = stockPriceData;
+        this.stockQuotes_ = stockPriceData;
         this.investments = investments;
+        assert investments.size() == stockQuotes_.size();
     }
 
     /**
@@ -67,12 +56,12 @@ public class Portfolio
      */
     private void updatePortfolioAssets(List<Asset> assets)
     {
-        stockPriceDataFiles = new ArrayList<File>();
+        stockQuotes_ = new ArrayList<List<Quote>>(assets.size());
         investments = new ArrayList<Double>();
 
         for( Asset asset : assets )
         {
-            stockPriceDataFiles.add( asset.getData() );
+            stockQuotes_.add( asset.getQuotes() );
             investments.add( asset.getInvestment() );
         }
     }
@@ -86,22 +75,18 @@ public class Portfolio
         return options;
     }
 
-    /**
-     * @return a list of stock data files from this portfolio
-     */
-    public List<File> getStockPriceDataFiles()
-    {
-        return stockPriceDataFiles;
+    public List<List<Quote>> getStockQuotes() {
+        return stockQuotes_;
     }
 
-    public double[] getReturns( int idx )
+    public double[] getReturns(int idx )
     {
-        return VarUtils.computeDailyReturns(FileHelper.getClosingPrices(stockPriceDataFiles.get(idx)));
+        return VarUtils.computeDailyReturns(FileHelper.getClosingPrices(stockQuotes_.get(idx)));
     }
 
     public List<double[]> getReturns( )
     {
-        return FileHelper.getReturnsFromFiles(stockPriceDataFiles);
+        return FileHelper.getReturnsFromQuotes(stockQuotes_);
     }
 
 

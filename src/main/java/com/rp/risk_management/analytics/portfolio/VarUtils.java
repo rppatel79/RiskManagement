@@ -27,7 +27,7 @@ public abstract class VarUtils
     /** Types of option pricing models and their action commands used in the GUI.
      * @deprecated
      * */
-    public static final String  BS               = "BS", MC = "MC", BT = "BT";
+    public static final String  MC = "MC";
     /** Types of VaR models and their action commands used in the GUI. */
     public static final String  MB               = "MB", HS = "HS";
     public static final int     DAYS_IN_YEAR     = 252, DAYS_IN_MONTH = 21;
@@ -476,12 +476,11 @@ public abstract class VarUtils
      */
     static double getPercentile( double[] data, int confidence )
     {
-        double percentile = StatUtils.percentile( data, 100 - confidence );
-        return percentile;
+        return StatUtils.percentile( data, 100 - confidence );
     }
 
     /**
-     * @param values
+     * @param values The values to be sumed up
      * @return sum of numbers contained in the list of values provided
      */
     static double sumOf( List<Double> values )
@@ -498,8 +497,8 @@ public abstract class VarUtils
     
     /**
      * Computes the 'sliding-window' of size varHorizon to getOptionPrice n-day returns over the varHorizon
-     * @param returns
-     * @param varHorizon
+     * @param returns returns of the asset
+     * @param varHorizon Window of VaR
      * @return array of returns covering the risk_management horizon
      */
     static double[] getReturnsOverVarHorizon( double[] returns, int varHorizon )
@@ -508,7 +507,7 @@ public abstract class VarUtils
         double[] nDayHorizonReturns = new double[numberOfReturns];
         for( int i = 0 ; i < numberOfReturns ; i++ )
         {
-            ArrayList<Double> windowReturns = new ArrayList<Double>();
+            ArrayList<Double> windowReturns = new ArrayList<>();
             // assuming return over n days = sum of returns on each day from start to start +
             // horizon
             for( int day = i ; day < i + varHorizon ; day++ )
@@ -528,7 +527,7 @@ public abstract class VarUtils
      * @see <a href="http://moodle.rhul.ac.uk/mod/resource/view.php?id=123643">CNDF Function</a>
      * @param x
      *            The number for which to getOptionPrice the value
-     * @return
+     * @return The CND for x
      */
     public static double CNDF( double x )
     {

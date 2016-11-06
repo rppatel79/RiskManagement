@@ -1,6 +1,9 @@
 package com.rp.risk_management.model;
 
+import com.rp.risk_management.marketdata.model.Quote;
+
 import java.io.File;
+import java.util.List;
 
 /**
  * Represents an option in the program.
@@ -15,12 +18,10 @@ public class Option
     // TODO daily or annual volatility, annual = daily * sqrt(252)
     private double interest, stockPrice, strike, dailyVolatility;
     private int    timeToMaturity;
-    /** Four letter code for the stock on which this option is held. */
-    private String stockID;
     /** Number of shares of the underlying asset held undert his option. */
     private int    numShares;
-    /** Historical price data of the option's underlying asset. */
-    private File   priceData;
+    /** Historical price data of the option's underlying asset.*/
+    private List<Quote> underlyingPrices_;
 
     private final OptionStyle optionStyle_;
     private final OptionType optionType_;
@@ -28,25 +29,23 @@ public class Option
     /**
      * Creates an option using standard option parameters
      * 
-     * @param stockPrice
-     * @param strike
-     * @param interest annual?
-     * @param dailyVolatility
+     * @param stockPrice stock price
+     * @param strike strike price of the option
+     * @param interest annualized rate
+     * @param dailyVolatility the daily vol
      * @param timeToMaturity in days
-     * @param stockID of the underlying asset.
      * @param optionType MUST BE ONE OF VARUTILS.AMERICAN/EUROPEAN-CALL/PUT
-     * @param priceData of the underlying asset.
+     * @param underlyingPrices of the underlying asset.
      */
     public Option( double stockPrice, int numShares, double strike, double interest, double dailyVolatility,
-                   int timeToMaturity, String stockID, File priceData, OptionStyle optionStyle, OptionType optionType )
+                   int timeToMaturity, List<Quote> underlyingPrices, OptionStyle optionStyle, OptionType optionType )
     {
         this.stockPrice = stockPrice;
         this.strike = strike;
         this.interest = interest;
         this.dailyVolatility = dailyVolatility;
         this.timeToMaturity = timeToMaturity;
-        this.stockID = stockID;
-        this.priceData = priceData;
+        this.underlyingPrices_ = underlyingPrices;
         this.numShares = numShares;
 
         optionStyle_=optionStyle;
@@ -60,14 +59,6 @@ public class Option
     public double getInterest()
     {
         return interest;
-    }
-
-    /**
-     * @param interest the interest to set
-     */
-    public void setInterest( double interest )
-    {
-        this.interest = interest;
     }
 
     /**
@@ -101,6 +92,7 @@ public class Option
 
     /**
      * @param initialStockPrice the initialStockPrice to set
+     * TODO Does this need to be immutable?
      */
     public void setInitialStockPrice( double initialStockPrice )
     {
@@ -117,46 +109,19 @@ public class Option
 
     /**
      * @param timeToMaturity the time to maturity of the Option in days
+     * TODO Does this need to be immutable?
      */
     public void setTimeToMaturity( int timeToMaturity )
     {
         this.timeToMaturity = timeToMaturity;
     }
 
-    /**
-     * @return the stockID
-     */
-    public String getStockID()
-    {
-        return stockID;
-    }
-
-    /**
-     * @param stockID the stockID to set
-     */
-    public void setStockID( String stockID )
-    {
-        this.stockID = stockID;
-    }
-
     public OptionStyle getOptionStyle() {
         return optionStyle_;
     }
 
-    /**
-     * @return the priceData
-     */
-    public File getPriceData()
-    {
-        return priceData;
-    }
-
-    /**
-     * @param priceData the priceData to set
-     */
-    public void setPriceData( File priceData )
-    {
-        this.priceData = priceData;
+    public List<Quote> getUnderlyingPrices() {
+        return underlyingPrices_;
     }
 
     /**

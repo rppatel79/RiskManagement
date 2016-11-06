@@ -1,8 +1,13 @@
 package com.rp.risk_management.model;
 
+import com.rp.risk_management.marketdata.api.MarketDataApi;
+import com.rp.risk_management.marketdata.api.YahooMarketDataApi;
+import com.rp.risk_management.marketdata.model.Quote;
+import com.rp.risk_management.marketdata.model.Stock;
 import com.rp.risk_management.util.date.SimpleDate;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Representation of an asset.
@@ -10,57 +15,32 @@ import java.io.File;
  */
 public class Asset
 {
-    /** Historical stock price data file for asset. (csv) */
-    private File   data;
-    /** Identifier for asset. */
-    private String ID;
     /** Amount of money invested in the asset. */
     private double investment;
-
-    /** Constructor to initialise an asset.
-     * @deprecated
-     * */
-    public Asset( File data, String iD, double investment )
-    {
-        this.data = data;
-        ID = iD;
-        this.investment = investment;
-    }
+    private Stock stock_;
+    private List<Quote> quotes_;
 
     /** Constructor to initialise an asset.
      * */
-    public Asset(File data, String iD, double investment, SimpleDate startDate, SimpleDate endDate)
+    public Asset(Stock stock, double investment, SimpleDate startDate, SimpleDate endDate) throws Exception
     {
-
-        this.data = data;
-        ID = iD;
+        stock_ = stock;
         this.investment = investment;
-    }
 
-    /**
-     * @return the historical price data for this asset
-     */
-    public File getData()
-    {
-        return data;
-    }
-
-    /**
-     * @return the identifier of this asset
-     */
-    public String getID()
-    {
-        return ID;
+        MarketDataApi marketDataApi = new YahooMarketDataApi();
+        quotes_ =marketDataApi.getMarketData(stock_,startDate,endDate);
     }
 
 
     /**
      * @return the investment in this asset
      */
-    public double getInvestment()
+    double getInvestment()
     {
         return investment;
     }
 
-
+    List<Quote> getQuotes() {
+        return quotes_;
+    }
 }

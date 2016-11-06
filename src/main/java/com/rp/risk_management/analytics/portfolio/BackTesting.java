@@ -29,7 +29,7 @@ public class BackTesting
         this.timePeriod = setup.getTimeHorizon();
     }
 
-    public BackTestingResults backTestPortfolio()
+    BackTestingResults backTestPortfolio()
     {
         BackTestingResults ret;
         switch( model )
@@ -54,9 +54,9 @@ public class BackTesting
     {
         //output += "Backtesting Model Building:\n";
         ModelBuilding mb = new ModelBuilding( portfolio, confidence, timePeriod );
-        File data = portfolio.getStockPriceDataFiles().get(0);
+
         double value = portfolio.getInvestments().get(0);
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( data ));
+        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( portfolio.getStockQuotes().get(0) ));
         int position = returns.length - 1 - numberOfDaysToTest;
         double[] estimations = mb.computeForBackTesting( returns, numberOfDaysToTest );
         return compareEstimationsWithActualLosses_OneStock( estimations, returns, position, value );
@@ -67,7 +67,7 @@ public class BackTesting
         HistoricalSimulation hs = new HistoricalSimulation( portfolio, confidence, timePeriod );
 
         double[] estimations = hs.estimateVaRForBackTestingOneStock( numberOfDaysToTest );
-        double[] allReturns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( portfolio.getStockPriceDataFiles()
+        double[] allReturns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( portfolio.getStockQuotes()
                                                                     .get( 0 ) ));
         int position = allReturns.length - 1 - numberOfDaysToTest;
         return compareEstimationsWithActualLosses_OneStock( estimations, allReturns, position,
@@ -77,7 +77,7 @@ public class BackTesting
     private BackTestingResults backTestMonteCarloSimulation(double[][] stockValues)
     {
         MonteCarloSimulation mc = new MonteCarloSimulation( portfolio, confidence, 1 );
-        double[] allReturns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( portfolio.getStockPriceDataFiles()
+        double[] allReturns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( portfolio.getStockQuotes()
                                                                     .get( 0 ) ));
         double[] estimations = mc.estimateVaRForBacktesting_OneStock( numberOfDaysToTest, stockValues );
         int position = allReturns.length - 1 - numberOfDaysToTest;
@@ -102,13 +102,12 @@ public class BackTesting
         double[] returnsToUse = Arrays.copyOfRange( allReturns, position, allReturns.length - 1 );
         double[] returnsOverVarHorizon = VarUtils.getReturnsOverVarHorizon( returnsToUse,
                                                                             timePeriod );
-        double[] actualLosses = new double[numberOfDaysToTest];
-        // reduce days as number of returns over time horizon decreases as time horizon grows 
+        // reduce days as number of returns over time horizon decreases as time horizon grows
         for( int day = 0 ; day < numberOfDaysToTest - (timePeriod - 1) ; day++ )
         {
             double actualLoss = initialValue
                                  - ( initialValue * Math.exp( returnsOverVarHorizon[day] ) );
-            actualLosses[day] = actualLoss;
+
             if( actualLoss > estimations[day] )
             {
                 numberOfExceptions++;
@@ -126,9 +125,9 @@ public class BackTesting
         return results;
     }
 
-    public static class BackTestingResults
+    static class BackTestingResults
     {
-        public int acceptableExceptions;
-        public int numberOfExceptions;
+        int acceptableExceptions;
+        int numberOfExceptions;
     }
 }

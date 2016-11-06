@@ -3,7 +3,6 @@
  */
 package com.rp.risk_management.analytics.portfolio;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +10,7 @@ import java.util.List;
 import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarlo;
 import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarloBinomialTree;
 import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarloBlackScholes;
+import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.model.Option;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.FileHelper;
@@ -30,17 +30,10 @@ public class MonteCarloSimulation
     /** Number of days to simulate prices over and getOptionPrice VaR for. */
     public static final int DEFAULT_NUMBER_OF_SIMULATIONS = 1000;
 
-    /** Final VaR computed using this model.
-     * @deprecated */
-    private double            monteCarloFinalVar;
-    /** Maximum VaR experienced during the simulation.
-     * * @deprecated */
-    private double            monteCarloMaximumVar;
-
     /** List of investments in assets. */
     private List<Double> portfolioValues;
     /** List of historical stock price data, in same order as investments. */
-    private List<File>   stockPriceDataFiles;
+    private List<List<Quote>> allStockQuotes_;
     /** Number of assets in the portfolio. */
     private int               numberOfStocks;
     /** The confidence level to getOptionPrice VaR at. */
@@ -62,7 +55,7 @@ public class MonteCarloSimulation
      */
     public MonteCarloSimulation( Portfolio portfolio, int confidence, int timePeriod )
     {
-        this.stockPriceDataFiles = portfolio.getStockPriceDataFiles();
+        this.allStockQuotes_ = portfolio.getStockQuotes();
         this.portfolio = portfolio;
         this.portfolioValues = portfolio.getInvestments();
         this.confidence = confidence;
@@ -145,7 +138,7 @@ public class MonteCarloSimulation
         if( numberOfStocks == 1 )
         {
             double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper
-                                               .getClosingPrices( stockPriceDataFiles.get( 0 ) ));
+                                               .getClosingPrices( allStockQuotes_.get( 0 ) ));
             double volatility = VarUtils.computeVolatility_EWMA( returnsFromFile );
             ret = computeForOneStock( portfolioValues.get( 0 ), volatility );
         }
@@ -209,21 +202,11 @@ public class MonteCarloSimulation
         double stockValueAtRequiredPercentile = VarUtils.getPercentile(
                                                                         finalValues, confidence );
         double finalVaR = stockValue - stockValueAtRequiredPercentile;
-        /*
-         * System.out.println( "Monte Carlo VaR simulated with "
-         * + numberOfSimulations + " simulations of " + timePeriod
-         * + " days each." );
-         * System.out.println( "Monte Carlo VaR (1 stock - Final): "
-         * + VarUtils.round( finalVaR ) );
-         */
-        this.monteCarloFinalVar = finalVaR;
 
         // maximum VaR during stock price path simulation
         Arrays.sort( maximumLosses );
         double maximumVaR = stockValue - maximumLosses[0];
         logger_.debug( "Monte Carlo VaR (1 stock - Maximum): "+ VarUtils.round( maximumVaR ) );
-
-        this.monteCarloMaximumVar = maximumVaR;
 
         return new MonteCarloResults(finalVaR, maximumVaR);
     }
@@ -252,9 +235,9 @@ public class MonteCarloSimulation
 
         List<double[]> returnList = new ArrayList<>();
 
-        for( File stockFile : stockPriceDataFiles )
+        for( List<Quote> stockQuotes : allStockQuotes_)
         {
-            double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( stockFile ));
+            double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( stockQuotes ));
             returnList.add( returnsFromFile );
         }
         double[][] covarianceMatrix = VarUtils.generateCovarianceMatrix(
@@ -321,15 +304,10 @@ public class MonteCarloSimulation
 
         double finalVaR = portfolioValue - valueAtPercentile;
 
-        this.monteCarloFinalVar = finalVaR;
-
         Arrays.sort( portfolioMinSimulatedValues );
         double maximumVaR = portfolioValue - portfolioMinSimulatedValues[0];
         logger_.debug( "Monte Carlo VaR (Portfolio - Maximum): "
                             + VarUtils.round( maximumVaR ) );
-        this.monteCarloMaximumVar = maximumVaR;
-
-        //double[] finalMinValues = { valueAtPercentile, portfolioFinalSimulatedValues[0] };
 
         return new MonteCarloResults(valueAtPercentile, portfolioFinalSimulatedValues[0]);
 
@@ -345,7 +323,7 @@ public class MonteCarloSimulation
     double[] estimateVaRForBacktesting_OneStock( int numberOfDaysToTest, double[][] stockValues )
     {
         double[] estimations = new double[numberOfDaysToTest];
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( stockPriceDataFiles.get( 0 ) ));
+        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( allStockQuotes_.get( 0 ) ));
         int numberOfReturnsToUse = returns.length - 1 - numberOfDaysToTest;
 
         for( int day = 0 ; day < numberOfDaysToTest ; day++ )
@@ -357,24 +335,6 @@ public class MonteCarloSimulation
             numberOfReturnsToUse++;
         }
         return estimations;
-    }
-
-    /**
-     * 
-     * @return final risk_management computed using this model.
-     */
-    public double getMonteCarloFinalVar()
-    {
-        return monteCarloFinalVar;
-    }
-
-    /**
-     * 
-     * @return max risk_management simulated using this model.
-     */
-    public double getMonteCarloMaximumVar()
-    {
-        return monteCarloMaximumVar;
     }
 
     public static class MonteCarloResults

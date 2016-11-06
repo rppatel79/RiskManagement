@@ -1,6 +1,7 @@
 package com.rp.risk_management.util;
 
 import com.rp.risk_management.analytics.portfolio.VarUtils;
+import com.rp.risk_management.marketdata.model.Quote;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -18,18 +19,16 @@ public class FileHelper
     private static final String COMMA            = ",";
 
     /**
-     * Uses {@code getReturnsFromFile(File file)} to iteratively extract files from a list and
-     * generate a list of returns for respective files.
+     * Uses {@code getReturnsFromQuotes(List<List<Quote>>)} to iteratively extract returns from a list of quotes
      *
-     * @param files List of csv files to parse for returns.
-     * @return List of arrays containing returns for each input file.
+     * @return List of arrays containing returns for each List of Quotes
      */
-    public static List<double[]> getReturnsFromFiles(List<File> files )
+    public static List<double[]> getReturnsFromQuotes(List<List<Quote>> allQuotes )
     {
-        List<double[]> returns = new ArrayList<double[]>();
-        for( File stockData : files )
+        List<double[]> returns = new ArrayList<>();
+        for( List<Quote> stockQuotes : allQuotes )
         {
-            returns.add( VarUtils.computeDailyReturns(getClosingPrices( stockData ) ));
+            returns.add( VarUtils.computeDailyReturns(getClosingPrices( stockQuotes ) ));
         }
 
         return returns;
@@ -37,47 +36,16 @@ public class FileHelper
 
     /**
      * Saves the series of closing prices from the historical stock data into a list of prices.
-     * @param file historical stock data
+     * @param quotes historical stock data
      * @return list of closing prices
+     * TODO Move me to another class
      */
-    public static List<Double> getClosingPrices( File file )
+    public static List<Double> getClosingPrices( List<Quote> quotes )
     {
-        List<Double> closePrices = new ArrayList<Double>();
-        try
-        {
-            BufferedReader reader = new BufferedReader( new FileReader( file ) );
-            String nextLine;
-            String comma = COMMA;
-            int counter = 0; // skip storing column heading
-            int closePriceColumn = 0;
-            while( ( nextLine = reader.readLine() ) != null )
-            {
-                if( counter == 0 )
-                {
-                    String[] line = nextLine.split( comma );
-                    for( int i = 0 ; i < line.length ; i++ )
-                    {
-                        if( line[i].contains( "Close" ) )
-                        {
-                            closePriceColumn = i;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    String[] line = nextLine.split( comma );
-                    closePrices.add( Double.parseDouble( line[closePriceColumn] ) );
-                }
-                counter++;
-            }
-            reader.close();
-        }
-        catch( IOException e )
-        {
-            logger_.error( "File" + file.getName() + " has a problem.",e);
-            throw new IllegalArgumentException(e);
-        }
-        return closePrices;
+        List<Double> ret = new ArrayList<>(quotes.size());
+        for (Quote quote : quotes)
+            ret.add(quote.getClose().doubleValue());
+
+        return ret;
     }
 }
