@@ -18,9 +18,12 @@ public class YahooMarketDataApi implements MarketDataApi
     public Quote getMarketData(Stock stock,SimpleDate date) throws Exception
     {
         List<Quote> quotes = getMarketData(stock, date, SimpleDateHelper.addDays(date, 1));
-        if (quotes.size() != 2)
-            throw new IllegalStateException("Expected [2] historical record, but recieved ["+quotes.size()+"]");
-        return quotes.get(1);
+        for (Quote quote : quotes)
+        {
+            if (date.equals(quote.getSimpleDate()))
+                return quote;
+        }
+        throw new IllegalStateException("Unable to get quote for ["+stock+"] ["+date+"]");
     }
 
     @Override
