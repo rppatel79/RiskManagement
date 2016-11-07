@@ -31,12 +31,12 @@ public class StressTester_UnitTest
 
 
         StressTester st = new StressTester( new Portfolio(Collections.singletonList(getTestAsset()),null), totalDays,totalDays/4 );
-        st.run(upOrDownArray);
+        StressTester.StressTesterResults results =st.run(upOrDownArray);
 
-        double[] simulatedValues=st.getSimulatedValues();
+        double[] simulatedValues=results.getSimulatedValues();
         Arrays.sort(simulatedValues);
 
-        double[] losses=st.getLosses();
+        double[] losses=results.getLosses();
         Arrays.sort(losses);
 
         Assert.assertEquals(9.14,simulatedValues[0],0.1);
@@ -62,12 +62,12 @@ public class StressTester_UnitTest
         double[] upOrDownArray = new double[totalDays];
         Arrays.fill(upOrDownArray, -0.04);
 
-        st.run(upOrDownArray);
+        StressTester.StressTesterResults results =st.run(upOrDownArray);
 
-        double[] simulatedValues=st.getSimulatedValues();
+        double[] simulatedValues=results .getSimulatedValues();
         Arrays.sort(simulatedValues);
 
-        double[] losses=st.getLosses();
+        double[] losses=results.getLosses();
         Arrays.sort(losses);
 
         Assert.assertEquals(27.47,simulatedValues[0],0.1);
@@ -75,19 +75,6 @@ public class StressTester_UnitTest
 
         Assert.assertEquals(0.0,losses[0],0.1);
         Assert.assertEquals(2972.53,losses[simulatedValues.length-1],0.1);
-    }
-
-    private void compareValues( StressTester st)
-    {
-        double[] simulatedValues = st.getSimulatedValues();
-        double[] losses = st.getLosses();
-        double minValue = simulatedValues[0];
-        double maxValue = simulatedValues[simulatedValues.length - 1];
-        System.out.println( "Min|Max portfolio value = " + minValue + " | " + maxValue );
-        double minLoss = losses[0];
-        double maxLoss = losses[losses.length - 1];
-        System.out.println( "Min|Max portfolio loss  = " + minLoss + " | " + maxLoss );
-        
     }
 
     private Asset getTestAsset() throws Exception

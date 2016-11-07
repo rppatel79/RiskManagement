@@ -8,62 +8,43 @@ import java.util.Random;
 
 /**
  * Implements the stress testing technique to see what affect a large decline in stock prices has on
- * the value of the portfolio.
+ * the value of the portfolio_.
  */
 public class StressTester
 {
     /** The factor by which stock values must decline in the event of a crash. */
-    private final double crashFactor = 0.50;
-    /** The portfolio to stress test. */
-    private final Portfolio portfolio;
+    private final double crashFactor_ = 0.50;
+    /** The portfolio_ to stress test. */
+    private final Portfolio portfolio_;
     /** The number of days to conduct the stress test over. */
-    private final int totalDays;
+    private final int totalDays_;
     /** The day at which the crash should happen. */
-    private final int crashDay;
-    /** Random number generator used to simulate changes in portfolio values from day to day. */
-    private final Random rng = new Random();
-
-    /** Array of portfolio values simulated before and after the crassh. */
-    private double[]       simulatedValues;
-    /** Array of losses occurring after portfolio values are simulated during the stress test. */
-    private double[]       losses;
-
-    /** The result of the stress test. */
-    private String output;
+    private final int crashDay_;
+    /** Random number generator used to simulate changes in portfolio_ values from day to day. */
+    private final Random rng_ = new Random();
 
     /**
-     * Initialise a stress tester using a portfolio.
-     * 
-     * @param pf
-     */
-    public StressTester( Portfolio pf )
-    {
-        this(pf, 100, 100/4);
-    }
-
-    /**
-     * Initialise a stress tester using a portfolio.
+     * Initialise a stress tester using a portfolio_.
      */
     public StressTester( Portfolio pf, int totalDays, int crashDay )
     {
-        this.portfolio = pf;
-        this.totalDays = totalDays;
-        this.crashDay = crashDay;
+        this.portfolio_ = pf;
+        this.totalDays_ = totalDays;
+        this.crashDay_ = crashDay;
     }
 
     /**
      * Run the stress test by simulating the portfolio values before and after the crash and
      * building the result from that data.
      */
-    public void run()
+    public StressTesterResults run()
     {
-        run(generateRandomDailyChange(totalDays));
+        return run(generateRandomDailyChange(totalDays_));
     }
 
-    void run(double[] dailyUpOrDownArray)
+    StressTesterResults run(double[] dailyUpOrDownArray)
     {
-        simulateCrashAndRecordLosses(dailyUpOrDownArray);
-        buildOutput();
+        return simulateCrashAndRecordLosses(dailyUpOrDownArray);
     }
 
     private double[] generateRandomDailyChange(int numDays)
@@ -71,9 +52,9 @@ public class StressTester
         double[] ret = new double[numDays];
 
         for (int i = 0 ; i < ret.length ; i++) {
-            int n = rng.nextInt(5);
+            int n = rng_.nextInt(5);
             double upOrDown = ((double) n) / 100;
-            if (rng.nextInt(2) == 0) {
+            if (rng_.nextInt(2) == 0) {
                 upOrDown = upOrDown * -1;
             }
             ret[i]=upOrDown;
@@ -83,41 +64,23 @@ public class StressTester
     }
 
     /**
-     * Builds up a results from the results of the stress test.
-     */
-    private void buildOutput()
-    {
-        output = "Original portfolio value: " + PortfolioUtil.getAssetsValue(portfolio) + "\n";
-        Arrays.sort( simulatedValues );
-        Arrays.sort( losses );
-        double minValue = simulatedValues[0];
-        double maxValue = simulatedValues[simulatedValues.length - 1];
-        output += ( "Min | Max portfolio value = " + minValue + " | " + maxValue );
-        output += "\n";
-        double minLoss = losses[0];
-        double maxLoss = losses[losses.length - 1];
-        output += ( "Min | Max portfolio loss  = " + minLoss + " | " + maxLoss );
-        output += ( "\n \n NOTE: Negative loss indicates a profit." );
-    }
-
-    /**
      * Simulates stock price movement on either side of the crash as a function of the previous
      * stock price multiplied by some random return.
-     * On the day of the crash, the portfolio value declines by the crash factor defined earlier.
+     * On the day of the crash, the portfolio_ value declines by the crash factor defined earlier.
      */
-    private void simulateCrashAndRecordLosses(double[] dailyUpOrDown)
+    private StressTesterResults simulateCrashAndRecordLosses(double[] dailyUpOrDown)
     {
-        double initialValue = VarUtils.sumOf( PortfolioUtil.getAssetInvestment(portfolio) );
-        simulatedValues = new double[totalDays];
-        losses = new double[totalDays];
+        double initialValue = VarUtils.sumOf( PortfolioUtil.getAssetInvestment(portfolio_) );
+        double[] simulatedValues = new double[totalDays_];
+        double[] losses = new double[totalDays_];
         simulatedValues[0] = initialValue;
         losses[0] = 0.0;
-        for( int day = 1 ; day < totalDays ; day++ )
+        for(int day = 1; day < totalDays_; day++ )
         {
             // value today = value yday + (value yday * some random number)
-            if( day == crashDay - 1 )
+            if( day == crashDay_ - 1 )
             {
-                double valueAtCrash = simulatedValues[day - 1] * crashFactor;
+                double valueAtCrash = simulatedValues[day - 1] * crashFactor_;
                 simulatedValues[day] = valueAtCrash;
 
             }
@@ -131,40 +94,45 @@ public class StressTester
 
             losses[day] = VarUtils.roundTwoDP( initialValue - simulatedValues[day] );
         }
+
+        return new StressTesterResults(simulatedValues, losses);
     }
 
-    /**
-     * @return the losses experienced by the portfoliod during the stress test.
-     */
-    public double[] getLosses()
+    public static class StressTesterResults
     {
-        return losses;
-    }
+        private final double[] simulatedValues;
+        private final double[] losses;
 
-    /**
-     * 
-     * @return the maximum loss experienced by the portfolio during the stress test.
-     */
-    public double getMaxLoss()
-    {
-        return losses[losses.length - 1];
-    }
+        private StressTesterResults(double[] simulatedValues, double[] losses) {
+            this.simulatedValues = simulatedValues;
+            this.losses = losses;
+        }
 
+        public double getMinValue()
+        {
+            return simulatedValues[0];
+        }
+        public double getMaxValue()
+        {
+            return simulatedValues[simulatedValues.length - 1];
+        }
 
-    /**
-     * @return the simulatedValues
-     */
-    public double[] getSimulatedValues()
-    {
-        return simulatedValues;
-    }
+        public double getMinLoss()
+        {
+            return losses[0];
+        }
+        public double getMaxLoss()
+        {
+            return losses[losses.length-1];
+        }
 
-    /**
-     * @return the result of the stress test
-     */
-    public String getResult()
-    {
-        return output;
+        public double[] getSimulatedValues() {
+            return simulatedValues;
+        }
+
+        public double[] getLosses() {
+            return losses;
+        }
     }
 
 }
