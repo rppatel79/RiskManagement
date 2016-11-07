@@ -56,10 +56,6 @@ public class MonteCarloBlackScholes implements OptionPricer
         return results_.finalValueOfOption_;
     }
 
-    public MonteCarloResults getMonteCarloResults() {
-        return results_;
-    }
-
     /**
      * Uses the Black-Scholes option pricing model alongside the Monte Carlo simulation model to
      * price an option.
@@ -118,11 +114,12 @@ public class MonteCarloBlackScholes implements OptionPricer
                 discountPeriod );
         double discountedMinValue = PreventValueCalculator.getDiscountedValue( meanMinValue, option.getInterest(),
                 discountPeriod );
-        // double VaR = initialOptionPrice - finalDayValue;
-        // double maxVaR = initialOptionPrice - minPrices[0];
 
-        MonteCarloResults monteCarloResults = new MonteCarloResults(discountedFinalValue,discountedMinValue);
-        return monteCarloResults;
+        return new MonteCarloResults(discountedFinalValue,discountedMinValue);
+    }
+
+    public MonteCarloResults getMonteCarloResults() {
+        return results_;
     }
 
 }

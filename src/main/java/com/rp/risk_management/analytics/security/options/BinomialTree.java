@@ -11,15 +11,11 @@ import org.apache.log4j.Logger;
 public class BinomialTree implements OptionPricer {
     private static final Logger logger_ = Logger.getLogger(BinomialTree.class);
 
-    private double S, X, T, volatility, interest;
-    private Option.OptionType optionType_;
-    private Option.OptionStyle optionStyle_;
-    /** The time step. One day is desirable. */
-    // private int n = 1;
-    private int      numberOfSteps;
-    private double   dt;
-    private double   p;
-    private double   optionPrice;
+    private final double S, X, T, volatility, interest;
+    private final Option.OptionType optionType_;
+    private final Option.OptionStyle optionStyle_;
+
+    private final double optionPrice_;
 
     /**
      * Constructor to initialise a binomial tree using parameters of an option
@@ -28,7 +24,8 @@ public class BinomialTree implements OptionPricer {
      * @param t in years, time to maturity
      * @param volatility of the underlying asset
      * @param interest rate of option
-     * @param type of option
+     * @param optionType of option
+     * @param  optionStyle of option
      */
     public BinomialTree(double s, double x, double t, double volatility, double interest, Option.OptionType optionType, Option.OptionStyle optionStyle )
     {
@@ -39,7 +36,7 @@ public class BinomialTree implements OptionPricer {
         this.interest = interest;
         this.optionType_ = optionType;
         this.optionStyle_ = optionStyle;
-        buildStockPriceTree();
+        this.optionPrice_= buildStockPriceTree();
     }
 
     /**
@@ -57,13 +54,13 @@ public class BinomialTree implements OptionPricer {
 
         this.volatility = volatility;
         this.interest = rate;
-        buildStockPriceTree();
+        this.optionPrice_ = buildStockPriceTree();
     }
     
     /**
      * Builds the binomial tree with stock prices going up and down.
      */
-    private void buildStockPriceTree()
+    private double buildStockPriceTree()
     {
         double u, d;
 
@@ -77,7 +74,7 @@ public class BinomialTree implements OptionPricer {
         int numberOfDays = (int) Math.floor( T * 252 );
 
         // dt = T / steps
-        dt = T / numberOfDays;
+        double dt = T / numberOfDays;
 
         // http://en.wikipedia.org/wiki/Binomial_options_pricing_model
 
@@ -95,7 +92,7 @@ public class BinomialTree implements OptionPricer {
         double ert = Math.exp( interest * dt );
         double ertminusd = ert - d;
         double uminusd = u - d;
-        p = ertminusd / uminusd;
+        double p = ertminusd / uminusd;
 
         if( p < 0 || p > 1 )
         {
@@ -103,7 +100,7 @@ public class BinomialTree implements OptionPricer {
         }
 
         // numberOfSteps = (int) ( T * 12 ) + 1;
-        numberOfSteps = numberOfDays + 1;
+        int numberOfSteps = numberOfDays + 1;
 
         double[][] tree = new double[numberOfSteps][numberOfSteps];
         tree[0][0] = S;
@@ -130,7 +127,7 @@ public class BinomialTree implements OptionPricer {
 
         //printTree( tree );
 
-        calculateOptionPrices( tree );
+        return calculateOptionPrices( tree, numberOfSteps, dt, p );
 
     }
     
@@ -138,7 +135,7 @@ public class BinomialTree implements OptionPricer {
      * Calculates the option prices using a tree of stock prices.
      * @param tree model of stock prices going up and down in a binomial tree
      */
-    private double calculateOptionPrices( double[][] tree )
+    private double calculateOptionPrices( double[][] tree, int numberOfSteps, double dt, double p )
     {
         double[][] values = new double[tree.length][tree.length];
 
@@ -233,7 +230,7 @@ public class BinomialTree implements OptionPricer {
 
         if (logger_.isDebugEnabled())
             printTree( values );
-        optionPrice = values[0][0];
+        double optionPrice = values[0][0];
 
         return optionPrice;
     }
@@ -270,7 +267,7 @@ public class BinomialTree implements OptionPricer {
     @Override
     public double getOptionPrice()
     {
-        return optionPrice;
+        return optionPrice_;
     }
 
 }

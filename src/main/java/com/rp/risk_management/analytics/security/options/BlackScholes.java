@@ -21,19 +21,12 @@ public class BlackScholes implements OptionPricer
     /**
      * Computes the price of a European Call/Put option based on the parameters specified.
      *
-     * @param optionType
-     *            call or put
-     * @param S
-     *            Starting price of the option
-     * @param X
-     *            Strike price of the option
-     * @param T
-     *            Time left to maturity
-     * @param r
-     *            Risk-free interest rate
-     * @param v
-     *            Volatility of the option
-     * @return
+     * @param optionType call or put
+     * @param S Starting price of the option
+     * @param X  Strike price of the option
+     * @param T Time left to maturity
+     * @param r Risk-free interest rate
+     * @param v Volatility of the option
      */
     public BlackScholes(Option.OptionType optionType, double S, double X, double T, double r,
                         double v )
@@ -52,6 +45,7 @@ public class BlackScholes implements OptionPricer
         this(option.getOptionType(),option.getInitialStockPrice(),option.getStrike(),option.getTimeToMaturity(),rate, volatility);
     }
 
+    @Override
     public double getOptionPrice( )
     {
         return computedOptionPrice;
