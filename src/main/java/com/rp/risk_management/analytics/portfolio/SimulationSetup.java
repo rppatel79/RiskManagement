@@ -3,31 +3,31 @@ package com.rp.risk_management.analytics.portfolio;
 import com.rp.risk_management.model.Portfolio;
 
 /**
- * Combines the user-selected VaR model, option pricing model, confidence level, time horizon and
- * user-selected portfolio to use when computing VaR.
+ * Combines the user-selected VaR model_, option pricing model_, confidence level, time horizon and
+ * user-selected portfolio_ to use when computing VaR.
  */
 public class SimulationSetup
 {
-    /** The model to use for computing VaR. */
-    private String    model;
+    /** The model_ to use for computing VaR. */
+    private final String model_;
     /** The confidence level to getOptionPrice VaR at. */
-    private int       confidenceLevel;
+    private final int confidenceLevel_;
     /** The time horizon to getOptionPrice VaR over. */
-    private int       timeHorizon;
-    /** The portfolio to getOptionPrice VaR for. */
-    private Portfolio portfolio;
+    private final int timeHorizon_;
+    /** The portfolio_ to getOptionPrice VaR for. */
+    private final Portfolio portfolio_;
 
     /**
-     * @return user-selected portfolio
+     * @return user-selected portfolio_
      */
     public Portfolio getPortfolio()
     {
-        return portfolio;
+        return portfolio_;
     }
 
     /**
-     * Creates a simulation setup using the user-selected VaR model, option pricing model,
-     * confidence level, time horizon and user-selected portfolio to use.
+     * Creates a simulation setup using the user-selected VaR model_, option pricing model_,
+     * confidence level, time horizon and user-selected portfolio_ to use.
      * 
      * @param selectedPortfolio
      * @param selectedModel
@@ -38,34 +38,34 @@ public class SimulationSetup
                             int confidenceLevel,
                             int timeHorizon )
     {
-        this.portfolio = selectedPortfolio;
-        this.model = selectedModel;
-        this.confidenceLevel = confidenceLevel;
-        this.timeHorizon = timeHorizon;
+        this.portfolio_ = selectedPortfolio;
+        this.model_ = selectedModel;
+        this.confidenceLevel_ = confidenceLevel;
+        this.timeHorizon_ = timeHorizon;
     }
 
     /**
-     * @return the user-selected VaR model
+     * @return the user-selected VaR model_
      */
     public String getModel()
     {
-        return model;
+        return model_;
     }
 
     /**
-     * @return the confidenceLevel to getOptionPrice VaR at.
+     * @return the confidenceLevel_ to getOptionPrice VaR at.
      */
     public int getConfidenceLevel()
     {
-        return confidenceLevel;
+        return confidenceLevel_;
     }
 
     /**
-     * @return the timeHorizon to getOptionPrice VaR over.
+     * @return the timeHorizon_ to getOptionPrice VaR over.
      */
     public int getTimeHorizon()
     {
-        return timeHorizon;
+        return timeHorizon_;
     }
 
 }

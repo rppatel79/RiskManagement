@@ -2,8 +2,7 @@ package com.rp.risk_management.model;
 
 import com.rp.risk_management.marketdata.model.Quote;
 
-import java.io.File;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents an option in the program.
@@ -16,12 +15,12 @@ public class Option
 
     /** Option parameters. */
     // TODO daily or annual volatility, annual = daily * sqrt(252)
-    private double interest, stockPrice, strike, dailyVolatility;
+    private double interest_, stockPrice_, strike_, dailyVolatility_;
     private int    timeToMaturity;
     /** Number of shares of the underlying asset held undert his option. */
-    private int    numShares;
+    private final int numShares;
     /** Historical price data of the option's underlying asset.*/
-    private List<Quote> underlyingPrices_;
+    private final List<Quote> underlyingPrices_;
 
     private final OptionStyle optionStyle_;
     private final OptionType optionType_;
@@ -30,7 +29,7 @@ public class Option
      * Creates an option using standard option parameters
      * 
      * @param stockPrice stock price
-     * @param strike strike price of the option
+     * @param strike strike_ price of the option
      * @param interest annualized rate
      * @param dailyVolatility the daily vol
      * @param timeToMaturity in days
@@ -40,12 +39,12 @@ public class Option
     public Option( double stockPrice, int numShares, double strike, double interest, double dailyVolatility,
                    int timeToMaturity, List<Quote> underlyingPrices, OptionStyle optionStyle, OptionType optionType )
     {
-        this.stockPrice = stockPrice;
-        this.strike = strike;
-        this.interest = interest;
-        this.dailyVolatility = dailyVolatility;
+        this.stockPrice_ = stockPrice;
+        this.strike_ = strike;
+        this.interest_ = interest;
+        this.dailyVolatility_ = dailyVolatility;
         this.timeToMaturity = timeToMaturity;
-        this.underlyingPrices_ = underlyingPrices;
+        this.underlyingPrices_ = Collections.unmodifiableList(underlyingPrices);
         this.numShares = numShares;
 
         optionStyle_=optionStyle;
@@ -53,20 +52,20 @@ public class Option
     }
 
     /**
-     * @return the interest
+     * @return the interest_
      * @deprecated
      */
     public double getInterest()
     {
-        return interest;
+        return interest_;
     }
 
     /**
-     * @return the strike
+     * @return the strike_
      */
     public double getStrike()
     {
-        return strike;
+        return strike_;
     }
 
     public OptionType getOptionType() {
@@ -74,12 +73,12 @@ public class Option
     }
 
     /**
-     * @return the dailyVolatility
+     * @return the dailyVolatility_
      * @deprecated TODO REMOVE
      */
     public double getDailyVolatility()
     {
-        return dailyVolatility;
+        return dailyVolatility_;
     }
 
     /**
@@ -87,7 +86,7 @@ public class Option
      */
     public double getInitialStockPrice()
     {
-        return stockPrice;
+        return stockPrice_;
     }
 
     /**
@@ -96,7 +95,7 @@ public class Option
      */
     public void setInitialStockPrice( double initialStockPrice )
     {
-        this.stockPrice = initialStockPrice;
+        this.stockPrice_ = initialStockPrice;
     }
 
     /**

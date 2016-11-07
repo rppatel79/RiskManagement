@@ -23,9 +23,9 @@ import java.util.List;
 public class HistoricalSimulation
 {
     private static final Logger logger_ = Logger.getLogger(HistoricalSimulation.class);
+
     /** List of investments for a portfolio. */
     private List<Double> portfolioValues;
-
     /** The confidence level to getOptionPrice VaR for. */
     private int               confidence;
     /** The portfolio being used for VaR computation. */
@@ -67,12 +67,6 @@ public class HistoricalSimulation
         {
 
             List<double[]> portfolioReturns = PortfolioUtil.getReturns(portfolio);
-
-            /*
-             * System.out.println( "Historical Simulation VaR (" + portfolioValues.size()
-             * + " stocks): "
-             * + Math.round( computeForMultipleStocks( portfolioReturns ) ) );
-             */
             return computeForMultipleStocks( portfolioReturns );
         }
 
@@ -123,7 +117,7 @@ public class HistoricalSimulation
      * Computes VaR for multiple stocks.
      * @return final VaR
      */
-    public double computeForMultipleStocks( List<double[]> portfolioReturns )
+    private double computeForMultipleStocks( List<double[]> portfolioReturns )
     {
         double var = 0.0;
 
@@ -274,6 +268,7 @@ public class HistoricalSimulation
                 switch( option.getOptionStyle() )
                 {
                     case European:
+
                         switch (option.getOptionType())
                         {
                             case Call:
@@ -294,12 +289,14 @@ public class HistoricalSimulation
                         OptionPricer bt = new BinomialTree( option, option.getInterest(), option.getDailyVolatility() );
                         historicalValue = bt.getOptionPrice();
                         break;
-                    default:
+                    case Bermuda:
                         option.setInitialStockPrice( stockPrice );
                         option.setTimeToMaturity( currentTimeToMaturity );
                         OptionPricer mc = new MonteCarlo(option);
                         historicalValue = mc.getOptionPrice();
                         break;
+                    default:
+                        throw new UnsupportedOperationException("Unsupport option style ["+option.getOptionStyle()+"]");
                 }
 
                 possibleOptionValues.add( historicalValue );
@@ -331,6 +328,9 @@ public class HistoricalSimulation
      */
     public double[] estimateVaRForBackTestingOneStock( int numberOfDaysToTest )
     {
+        if ( portfolio.getAssets().size() != 1 && portfolio.getOptions() != null )
+            throw new IllegalArgumentException("Expected exactly 1 non-option asset");
+
         double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(PortfolioUtil.getStockQuotes(portfolio).get(0)));
         int numberOfReturnsToUse = returns.length - 1 - numberOfDaysToTest;
         double[] estimations = new double[numberOfDaysToTest];

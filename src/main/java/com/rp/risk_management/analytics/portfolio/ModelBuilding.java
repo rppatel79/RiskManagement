@@ -100,10 +100,10 @@ public class ModelBuilding
     /**
      * For one stock in portfolio.
      * Use the returns until current day to estimate volatility and thus the VaR for next day.
-     * @param numberOfDaysToTest
+     * @param numberOfDaysToTest  The number of days to back test
      * @return
      */
-    public double[] computeForBackTesting( int numberOfDaysToTest )
+    double[] computeForBackTesting( int numberOfDaysToTest )
     {
         if (portfolio_.getAssets().size() != 1 && portfolio_.getOptions() !=null)
             throw new IllegalArgumentException("Only support for a single non-option asset.");
