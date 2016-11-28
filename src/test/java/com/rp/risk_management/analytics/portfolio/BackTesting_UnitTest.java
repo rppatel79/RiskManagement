@@ -1,7 +1,7 @@
 package com.rp.risk_management.analytics.portfolio;
 
 import com.rp.risk_management.marketdata.model.Stock;
-import com.rp.risk_management.model.Asset;
+import com.rp.risk_management.model.Position;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.ResourceHelper;
 import com.rp.risk_management.util.date.SimpleDate;
@@ -26,7 +26,7 @@ public class BackTesting_UnitTest
         List<Double> portfolioValues = new ArrayList<Double>();
         double msftInvestment = 1000000.0;
         portfolioValues.add( msftInvestment );
-        Asset msft = new Asset( new Stock("MSFT"), msftInvestment,
+        Position msft = new Position( new Stock("MSFT"), msftInvestment,
                 new SimpleDate(2012,4,2),new SimpleDate(2013,4,1));
         Portfolio portfolio = new Portfolio(Collections.singletonList(msft),null);
 

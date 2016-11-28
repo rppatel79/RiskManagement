@@ -2,6 +2,7 @@ package com.rp.risk_management.marketdata.api;
 
 import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.marketdata.model.Stock;
+import com.rp.risk_management.model.Position;
 import com.rp.risk_management.util.date.SimpleDate;
 import com.rp.risk_management.util.date.SimpleDateHelper;
 import yahoofinance.YahooFinance;
@@ -24,6 +25,11 @@ public class YahooMarketDataApi implements MarketDataApi
                 return quote;
         }
         throw new IllegalStateException("Unable to get quote for ["+stock+"] ["+date+"]");
+    }
+
+    @Override
+    public List<Quote> getMarketData(Position position) throws Exception {
+        return getMarketData(position.getStock(),position.getStartDate(),position.getEndDate());
     }
 
     @Override

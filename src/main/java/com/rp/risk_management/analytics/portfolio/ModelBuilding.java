@@ -105,7 +105,7 @@ public class ModelBuilding
      */
     double[] computeForBackTesting( int numberOfDaysToTest )
     {
-        if (portfolio_.getAssets().size() != 1 && portfolio_.getOptions() !=null)
+        if (portfolio_.getPositions().size() != 1 && portfolio_.getOptions() !=null)
             throw new IllegalArgumentException("Only support for a single non-option asset.");
         double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( PortfolioUtil.getStockQuotes(portfolio_).get(0) ));
 

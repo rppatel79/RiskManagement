@@ -328,7 +328,7 @@ public class HistoricalSimulation
      */
     public double[] estimateVaRForBackTestingOneStock( int numberOfDaysToTest )
     {
-        if ( portfolio.getAssets().size() != 1 && portfolio.getOptions() != null )
+        if ( portfolio.getPositions().size() != 1 && portfolio.getOptions() != null )
             throw new IllegalArgumentException("Expected exactly 1 non-option asset");
 
         double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(PortfolioUtil.getStockQuotes(portfolio).get(0)));

@@ -3,8 +3,6 @@
  */
 package com.rp.risk_management.model;
 
-import com.rp.risk_management.util.model.PortfolioUtil;
-
 import java.util.List;
 
 /**
@@ -15,18 +13,18 @@ public class Portfolio
     /** List of options held in this portfolio. */
     private final List<Option> options_;
     /** List of stocks held in this portfolio. */
-    private final List<Asset> assets_;
+    private final List<Position> positions_;
     
     /**
      * Initialise a portfolio with a list of assets and options_.
      * 
-     * @param assets list of assets to add to this portfolio
+     * @param positions list of assets to add to this portfolio
      * @param options list of options_ to add to this portfolio
      */
-    public Portfolio( List<Asset> assets, List<Option> options )
+    public Portfolio(List<Position> positions, List<Option> options )
     {
         this.options_ = options;
-        this.assets_ = assets;
+        this.positions_ = positions;
     }
 
     /**
@@ -38,8 +36,8 @@ public class Portfolio
     }
 
 
-    public List<Asset> getAssets() {
-        return assets_;
+    public List<Position> getPositions() {
+        return positions_;
     }
 
 }

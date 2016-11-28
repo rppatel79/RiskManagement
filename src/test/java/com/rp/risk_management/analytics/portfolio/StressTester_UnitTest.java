@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.rp.risk_management.marketdata.model.Stock;
-import com.rp.risk_management.model.Asset;
+import com.rp.risk_management.model.Position;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.ResourceHelper;
 import com.rp.risk_management.util.date.SimpleDate;
@@ -49,11 +49,11 @@ public class StressTester_UnitTest
     @Test
     public void testStressReturnsForMultipleStocks() throws Exception
     {
-        List<Asset> assets = new ArrayList<>();
-        assets.add(getTestAsset());
-        assets.add(new Asset( new Stock("AAPL"), 2000.0 ,
+        List<Position> positions = new ArrayList<>();
+        positions.add(getTestAsset());
+        positions.add(new Position( new Stock("AAPL"), 2000.0 ,
                 new SimpleDate(2013,3,7),new SimpleDate(2013,12,3)));//ResourceHelper.getInstance().getResource("APPLE.csv" )
-        Portfolio p = new Portfolio(assets,null);
+        Portfolio p = new Portfolio(positions,null);
 
 
         int totalDays=100;
@@ -77,7 +77,7 @@ public class StressTester_UnitTest
         Assert.assertEquals(2972.53,losses[simulatedValues.length-1],0.1);
     }
 
-    private Asset getTestAsset() throws Exception
+    private Position getTestAsset() throws Exception
     {
         File prevStockData = ResourceHelper.getInstance().getResource("MSFT_Apr2012_Apr2013.csv" );
         ArrayList<File> stockPriceDataFiles = new ArrayList<>();
@@ -85,7 +85,7 @@ public class StressTester_UnitTest
         ArrayList<Double> portfolioValues = new ArrayList<>();
         double msftInvestment = 1000.0;
         portfolioValues.add( msftInvestment );
-        return new Asset( new Stock("MSFT"), msftInvestment ,new SimpleDate(2012,4,2),new SimpleDate(2013,4,1));
+        return new Position( new Stock("MSFT"), msftInvestment ,new SimpleDate(2012,4,2),new SimpleDate(2013,4,1));
 
     }
 }

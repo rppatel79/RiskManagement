@@ -1,7 +1,9 @@
 package com.rp.risk_management.util.model;
 
+import com.rp.risk_management.marketdata.api.MarketDataApi;
+import com.rp.risk_management.marketdata.api.YahooMarketDataApi;
 import com.rp.risk_management.marketdata.model.Quote;
-import com.rp.risk_management.model.Asset;
+import com.rp.risk_management.model.Position;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.FileHelper;
 
@@ -18,8 +20,8 @@ public class PortfolioUtil
     public static List<Double> getAssetInvestment(Portfolio portfolio)
     {
         List<Double> ret = new ArrayList<>();
-        for (Asset asset : portfolio.getAssets())
-            ret.add(asset.getInvestment());
+        for (Position position : portfolio.getPositions())
+            ret.add(position.getInvestment());
 
         return ret;
     }
@@ -27,11 +29,21 @@ public class PortfolioUtil
     /**
      * @param portfolio
      */
-    public static List<List<Quote>> getStockQuotes(Portfolio portfolio) {
+    public static List<List<Quote>> getStockQuotes(Portfolio portfolio)
+    {
         List<List<Quote>> allQuotes = new ArrayList<>();
-        for (Asset stocks : portfolio.getAssets())
-            allQuotes.add(stocks.getQuotes());
 
+        MarketDataApi marketDataApi = new YahooMarketDataApi();
+
+        for (Position position : portfolio.getPositions()) {
+            try {
+                allQuotes.add(marketDataApi.getMarketData(position.getStock(), position.getStartDate(), position.getEndDate()));
+            }
+            catch (Exception ex)
+            {
+                throw new RuntimeException("Unable to get market data for the position ["+position+"]",ex);
+            }
+        }
         return allQuotes;
     }
 

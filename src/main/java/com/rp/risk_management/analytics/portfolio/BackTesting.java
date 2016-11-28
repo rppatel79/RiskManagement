@@ -55,7 +55,7 @@ public class BackTesting
 
     private BackTestingResults backTestModelBuilding()
     {
-        if (portfolio_.getAssets().size() != 1 && portfolio_.getOptions() != null)
+        if (portfolio_.getPositions().size() != 1 && portfolio_.getOptions() != null)
             throw new IllegalArgumentException("Only support for single stock within a portfolio_");
 
         ModelBuilding mb = new ModelBuilding(portfolio_, confidence_, timePeriod_);
@@ -86,7 +86,7 @@ public class BackTesting
      */
     private BackTestingResults compareEstimationsWithActualLosses_OneStock(double[] estimations)
     {
-        if (portfolio_.getAssets().size() != 1 && portfolio_.getOptions() != null)
+        if (portfolio_.getPositions().size() != 1 && portfolio_.getOptions() != null)
             throw new IllegalArgumentException("Only support for single stock within a portfolio_");
 
         double initialValue = PortfolioUtil.getAssetInvestment(portfolio_).get(0);
