@@ -13,7 +13,7 @@ import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarloB
 import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.model.Option;
 import com.rp.risk_management.model.Portfolio;
-import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.QuoteHelper;
 import com.rp.risk_management.util.model.PortfolioUtil;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -138,7 +138,7 @@ public class MonteCarloSimulation
         MonteCarloResults ret = null;
         if( numberOfStocks_ == 1 )
         {
-            double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper
+            double[] returnsFromFile = VarUtils.computeDailyReturns(QuoteHelper
                                                .getClosingPrices( allStockQuotes_.get( 0 ) ));
             double volatility = VarUtils.computeVolatility_EWMA( returnsFromFile );
             ret = computeForOneStock( portfolioValues_.get( 0 ), volatility );
@@ -238,7 +238,7 @@ public class MonteCarloSimulation
 
         for( List<Quote> stockQuotes : allStockQuotes_)
         {
-            double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( stockQuotes ));
+            double[] returnsFromFile = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices( stockQuotes ));
             returnList.add( returnsFromFile );
         }
         double[][] covarianceMatrix = VarUtils.generateCovarianceMatrix(
@@ -323,7 +323,7 @@ public class MonteCarloSimulation
     double[] estimateVaRForBacktesting_OneStock( int numberOfDaysToTest, double[][] stockValues )
     {
         double[] estimations = new double[numberOfDaysToTest];
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( allStockQuotes_.get( 0 ) ));
+        double[] returns = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices( allStockQuotes_.get( 0 ) ));
         int numberOfReturnsToUse = returns.length - 1 - numberOfDaysToTest;
 
         for( int day = 0 ; day < numberOfDaysToTest ; day++ )

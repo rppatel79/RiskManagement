@@ -5,7 +5,7 @@ package com.rp.risk_management.analytics.portfolio;
 
 import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.model.Portfolio;
-import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.QuoteHelper;
 import com.rp.risk_management.util.model.PortfolioUtil;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class ModelBuilding
 
         for( List<Quote> stockQuotes : allStockQuotes_ )
         {
-            double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( stockQuotes ));
+            double[] returnsFromFile = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices( stockQuotes ));
             returnList.add( returnsFromFile );
         }
 
@@ -107,7 +107,7 @@ public class ModelBuilding
     {
         if (portfolio_.getPositions().size() != 1 && portfolio_.getOptions() !=null)
             throw new IllegalArgumentException("Only support for a single non-option asset.");
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( PortfolioUtil.getStockQuotes(portfolio_).get(0) ));
+        double[] returns = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices( PortfolioUtil.getStockQuotes(portfolio_).get(0) ));
 
         int numberOfReturnsToUse = returns.length - 1 - numberOfDaysToTest;
         double portfolioValue = portfolioValues.get( 0 );

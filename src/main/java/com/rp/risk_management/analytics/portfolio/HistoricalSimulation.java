@@ -9,7 +9,7 @@ import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarlo;
 import com.rp.risk_management.analytics.security.options.OptionPricer;
 import com.rp.risk_management.model.Option;
 import com.rp.risk_management.model.Portfolio;
-import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.QuoteHelper;
 import com.rp.risk_management.util.model.PortfolioUtil;
 import org.apache.log4j.Logger;
 
@@ -95,7 +95,7 @@ public class HistoricalSimulation
      */
     private double computeValueAtRisk_OneStock()
     {
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(PortfolioUtil.getStockQuotes(portfolio).get(0)));
+        double[] returns = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices(PortfolioUtil.getStockQuotes(portfolio).get(0)));
         return getVaROneStock( returns );
     }
     
@@ -188,7 +188,7 @@ public class HistoricalSimulation
 
         /***************** STOCKS *********************/
         // use previous functionality to getOptionPrice final prices of the portfolio and options
-        List<double[]> portfolioReturns = FileHelper.getReturnsFromQuotes( PortfolioUtil.getStockQuotes(portfolio) );
+        List<double[]> portfolioReturns = QuoteHelper.getReturnsFromQuotes( PortfolioUtil.getStockQuotes(portfolio) );
         int numberOfStocks = portfolioReturns.size();
 
         // should be the smallest of the lengths of the array of returns.
@@ -251,7 +251,7 @@ public class HistoricalSimulation
     {
         double[] finalMinOptionsValue = new double[2];
         // get returns from file
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( option.getUnderlyingPrices() ));
+        double[] returns = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices( option.getUnderlyingPrices() ));
         int numberOfReturns = returns.length;
         List<Double> possibleOptionValues = new ArrayList<Double>();
         // getOptionPrice possible value change for each return in data
@@ -331,7 +331,7 @@ public class HistoricalSimulation
         if ( portfolio.getPositions().size() != 1 && portfolio.getOptions() != null )
             throw new IllegalArgumentException("Expected exactly 1 non-option asset");
 
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(PortfolioUtil.getStockQuotes(portfolio).get(0)));
+        double[] returns = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices(PortfolioUtil.getStockQuotes(portfolio).get(0)));
         int numberOfReturnsToUse = returns.length - 1 - numberOfDaysToTest;
         double[] estimations = new double[numberOfDaysToTest];
 

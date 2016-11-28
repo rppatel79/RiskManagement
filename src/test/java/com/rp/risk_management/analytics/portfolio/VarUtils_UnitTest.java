@@ -10,8 +10,7 @@ import com.rp.risk_management.marketdata.api.MarketDataApi;
 import com.rp.risk_management.marketdata.api.YahooMarketDataApi;
 import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.marketdata.model.Stock;
-import com.rp.risk_management.util.FileHelper;
-import com.rp.risk_management.util.ResourceHelper;
+import com.rp.risk_management.util.QuoteHelper;
 import com.rp.risk_management.util.date.SimpleDate;
 import org.junit.Test;
 
@@ -23,7 +22,7 @@ public class VarUtils_UnitTest
     public void shouldReturnCorrectNumberOfReturnsFromMSFTFile() throws Exception
     {
         MarketDataApi marketDataApi = new YahooMarketDataApi();
-        List<Double> closingPrices = FileHelper.getClosingPrices(marketDataApi.getMarketData(new Stock("MSFT"),new SimpleDate(2013,8,13),new SimpleDate(2013,11,15)));
+        List<Double> closingPrices = QuoteHelper.getClosingPrices(marketDataApi.getMarketData(new Stock("MSFT"),new SimpleDate(2013,8,13),new SimpleDate(2013,11,15)));
         double[] dailyReturns=VarUtils.computeDailyReturns(closingPrices);
         assertTrue( closingPrices.size()-1 == dailyReturns.length );
     }
@@ -75,7 +74,7 @@ public class VarUtils_UnitTest
     {
         MarketDataApi marketDataApi = new YahooMarketDataApi();
         List<Quote> quotes = marketDataApi.getMarketData(new Stock("GOOG"),new SimpleDate(2013,9,19),new SimpleDate(2013,10,18));
-        double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(quotes));
+        double[] returnsFromFile = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices(quotes));
         double computedVolatility = VarUtils.computeVolatility_Standard( returnsFromFile );
         double expectedVolatility = 0.0298958;
         assertEquals( expectedVolatility, computedVolatility, delta );
@@ -86,7 +85,7 @@ public class VarUtils_UnitTest
     {
         MarketDataApi marketDataApi = new YahooMarketDataApi();
         List<Quote> quotes = marketDataApi.getMarketData(new Stock("GOOG"),new SimpleDate(2013,9,19),new SimpleDate(2013,10,18));
-        double[] returns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(quotes) );
+        double[] returns = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices(quotes) );
         double computedVolatility = VarUtils.computeVolatility_EWMA( returns );
         double expectedVolatility = 0.06011;
         assertEquals( expectedVolatility, computedVolatility, delta );
@@ -97,7 +96,7 @@ public class VarUtils_UnitTest
     {
         MarketDataApi marketDataApi = new YahooMarketDataApi();
         List<Quote> quotes = marketDataApi.getMarketData(new Stock("GOOG"),new SimpleDate(2013,9,19),new SimpleDate(2013,10,18));
-        double[] returnsFromFile = VarUtils.computeDailyReturns(FileHelper.getClosingPrices(quotes));
+        double[] returnsFromFile = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices(quotes));
         double computedVolatility = VarUtils.computeVolatility_GARCH( returnsFromFile );
         double expectedVolatility = 0.04019688;
         assertEquals( expectedVolatility, computedVolatility, delta );

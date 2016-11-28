@@ -3,20 +3,12 @@ package com.rp.risk_management.util;
 import com.rp.risk_management.analytics.portfolio.VarUtils;
 import com.rp.risk_management.marketdata.model.Quote;
 import org.apache.log4j.Logger;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileHelper
+public class QuoteHelper
 {
-    private static final Logger logger_ = Logger.getLogger(FileHelper.class);
-
-    /** Used to split the stock price data file contents into a array of strings. */
-    private static final String COMMA            = ",";
+    private static final Logger logger_ = Logger.getLogger(QuoteHelper.class);
 
     /**
      * Uses {@code getReturnsFromQuotes(List<List<Quote>>)} to iteratively extract returns from a list of quotes

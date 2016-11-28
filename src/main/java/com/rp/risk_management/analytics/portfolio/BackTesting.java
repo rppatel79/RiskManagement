@@ -1,7 +1,7 @@
 package com.rp.risk_management.analytics.portfolio;
 
 import com.rp.risk_management.model.Portfolio;
-import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.QuoteHelper;
 import com.rp.risk_management.util.model.PortfolioUtil;
 
 import java.util.Arrays;
@@ -90,7 +90,7 @@ public class BackTesting
             throw new IllegalArgumentException("Only support for single stock within a portfolio_");
 
         double initialValue = PortfolioUtil.getAssetInvestment(portfolio_).get(0);
-        double[] allReturns = VarUtils.computeDailyReturns(FileHelper.getClosingPrices( PortfolioUtil.getStockQuotes(portfolio_).get(0) ));
+        double[] allReturns = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices( PortfolioUtil.getStockQuotes(portfolio_).get(0) ));
         int dayToStart = allReturns.length - 1 - NUMBER_OF_DAYS_TO_TEST;
 
         int position = dayToStart;

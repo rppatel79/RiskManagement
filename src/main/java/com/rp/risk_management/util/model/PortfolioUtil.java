@@ -5,7 +5,7 @@ import com.rp.risk_management.marketdata.api.YahooMarketDataApi;
 import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.model.Position;
 import com.rp.risk_management.model.Portfolio;
-import com.rp.risk_management.util.FileHelper;
+import com.rp.risk_management.util.QuoteHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class PortfolioUtil
      */
     public static List<double[]> getReturns(Portfolio portfolio)
     {
-        return FileHelper.getReturnsFromQuotes(getStockQuotes(portfolio));
+        return QuoteHelper.getReturnsFromQuotes(getStockQuotes(portfolio));
     }
 
     /**
