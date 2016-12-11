@@ -2,7 +2,6 @@ package com.rp.risk_management.util;
 
 import com.rp.risk_management.analytics.portfolio.VarUtils;
 import com.rp.risk_management.marketdata.model.Quote;
-import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 

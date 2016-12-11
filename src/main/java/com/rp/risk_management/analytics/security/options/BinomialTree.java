@@ -200,8 +200,8 @@ public class BinomialTree implements OptionPricer {
                             case Put:
                                 // early exercise possible, value = Max [Binomial Value, Exercise Value]
                                 binomialValue = eMinusRT
-                                        * ((p * values[row][column + 1]) + (1 - p)
-                                        * values[row + 1][column + 1]);
+                                        * (p * values[row][column + 1]) + (1 - p)
+                                        * values[row + 1][column + 1];
                                 intrinsicValue = Math.max(X - tree[row][column], 0);
                                 // intrinsic value for put is Max(X-Sn, 0)
                                 values[row][column] = Math.max(binomialValue, intrinsicValue);
