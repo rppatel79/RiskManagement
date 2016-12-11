@@ -7,11 +7,11 @@ import com.rp.risk_management.util.date.SimpleDate;
 import com.rp.risk_management.util.date.SimpleDateHelper;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
-import yahoofinance.histquotes.Interval;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.rp.risk_management.marketdata.api.MarketDataApi.Interval.DAILY;
 
 public class YahooMarketDataApi implements MarketDataApi
 {
@@ -35,7 +35,7 @@ public class YahooMarketDataApi implements MarketDataApi
     @Override
     public List<Quote> getMarketData(Stock stock,SimpleDate fromDate, SimpleDate toDate) throws Exception
     {
-        return getMarketData(stock,fromDate, toDate, Interval.DAILY);
+        return getMarketData(stock,fromDate, toDate, DAILY);
     }
 
     @Override

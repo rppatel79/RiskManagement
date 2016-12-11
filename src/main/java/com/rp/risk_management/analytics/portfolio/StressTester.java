@@ -2,8 +2,6 @@ package com.rp.risk_management.analytics.portfolio;
 
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.model.PortfolioUtil;
-
-import java.util.Arrays;
 import java.util.Random;
 
 /**

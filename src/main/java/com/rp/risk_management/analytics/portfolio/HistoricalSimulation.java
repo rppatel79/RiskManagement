@@ -121,8 +121,6 @@ public class HistoricalSimulation
     {
         double var = 0.0;
 
-        int numberOfStocks = portfolioReturns.size();
-
         // should be the smallest of the lengths of the array of returns.
         int[] lengthsOfReturns = new int[portfolioValues.size()];
         for( double[] arr : portfolioReturns )
@@ -181,7 +179,7 @@ public class HistoricalSimulation
 
         for( Option option : options )
         {
-            initialOptionsValue += ( option.getInitialStockPrice() * option.getNumShares() );
+            initialOptionsValue += option.getInitialStockPrice() * option.getNumShares();
         }
 
         initialPortFolioValue = VarUtils.sumOf( investments ) + initialOptionsValue;

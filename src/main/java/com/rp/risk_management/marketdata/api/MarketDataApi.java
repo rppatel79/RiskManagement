@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface MarketDataApi
 {
-    public enum Interval{DAILY,WEEKLY,MONTHLY}
+    enum Interval{DAILY,WEEKLY,MONTHLY}
 
-    public Quote getMarketData(Stock symbol, SimpleDate date)throws Exception;
-    public List<Quote> getMarketData(Position position)throws Exception;
-    public List<Quote> getMarketData(Stock stock, SimpleDate fromDate, SimpleDate toDate) throws Exception;
-    public List<Quote> getMarketData(Stock stock,SimpleDate fromDate, SimpleDate toDate, Interval interval) throws Exception;
+    Quote getMarketData(Stock symbol, SimpleDate date)throws Exception;
+    List<Quote> getMarketData(Position position)throws Exception;
+    List<Quote> getMarketData(Stock stock, SimpleDate fromDate, SimpleDate toDate) throws Exception;
+    List<Quote> getMarketData(Stock stock,SimpleDate fromDate, SimpleDate toDate, Interval interval) throws Exception;
 }

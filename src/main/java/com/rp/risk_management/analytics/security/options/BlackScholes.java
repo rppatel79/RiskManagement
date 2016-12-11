@@ -75,4 +75,16 @@ public class BlackScholes implements OptionPricer
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "BlackScholes{" +
+                "S=" + S +
+                ", X=" + X +
+                ", T=" + T +
+                ", r=" + r +
+                ", v=" + v +
+                ", computedOptionPrice=" + computedOptionPrice +
+                '}';
+    }
 }

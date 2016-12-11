@@ -93,4 +93,13 @@ public class MonteCarloBinomialTree
         return monteCarloResults;
     }
 
+    @Override
+    public String toString() {
+        return "MonteCarloBinomialTree{" +
+                "option_=" + option_ +
+                ", numberOfSimulations_=" + numberOfSimulations_ +
+                ", timePeriod_=" + timePeriod_ +
+                ", results_=" + results_ +
+                '}';
+    }
 }

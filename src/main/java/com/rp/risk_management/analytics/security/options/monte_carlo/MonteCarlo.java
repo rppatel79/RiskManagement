@@ -62,12 +62,12 @@ public class MonteCarlo implements OptionPricer
             if( option_.getOptionType() == Option.OptionType.Call )
             {
                 exerciseValue = Math
-                        .max( ( currentPrice - option_.getStrike() ), 0 );
+                        .max( currentPrice - option_.getStrike(), 0 );
             }
             else
             {
                 exerciseValue = Math
-                        .max( ( option_.getStrike() - currentPrice ), 0 );
+                        .max( option_.getStrike() - currentPrice, 0 );
             }
             exerciseValues[i] = exerciseValue;
         }

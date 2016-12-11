@@ -94,7 +94,7 @@ public class MonteCarloSimulation
 
 
             for (Option option : portfolio_.getOptions()) {
-                initialOptionsValue += (option.getInitialStockPrice() * option.getNumShares());
+                initialOptionsValue += option.getInitialStockPrice() * option.getNumShares();
             }
 
             for (Option o : options) {
@@ -302,8 +302,6 @@ public class MonteCarloSimulation
         {
             portfolioValue += stockValue;
         }
-
-        double finalVaR = portfolioValue - valueAtPercentile;
 
         Arrays.sort( portfolioMinSimulatedValues );
         double maximumVaR = portfolioValue - portfolioMinSimulatedValues[0];
