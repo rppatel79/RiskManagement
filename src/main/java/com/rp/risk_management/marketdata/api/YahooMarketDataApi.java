@@ -47,6 +47,7 @@ public class YahooMarketDataApi implements MarketDataApi
         return getQuotes(stock, results);
     }
 
+    @SuppressWarnings("PMD")
     private yahoofinance.histquotes.Interval convertInterval(Interval interval) {
         switch (interval)
         {
