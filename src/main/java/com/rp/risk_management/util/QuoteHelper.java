@@ -8,7 +8,7 @@ import java.util.List;
 
 public class QuoteHelper
 {
-    private static final Logger logger_ = Logger.getLogger(QuoteHelper.class);
+    //private static final Logger logger_ = Logger.getLogger(QuoteHelper.class);
 
     /**
      * Uses {@code getReturnsFromQuotes(List<List<Quote>>)} to iteratively extract returns from a list of quotes

@@ -1,8 +1,5 @@
 package com.rp.risk_management.model;
 
-import com.rp.risk_management.marketdata.api.MarketDataApi;
-import com.rp.risk_management.marketdata.api.YahooMarketDataApi;
-import com.rp.risk_management.marketdata.model.Quote;
 import com.rp.risk_management.marketdata.model.Stock;
 import com.rp.risk_management.util.date.SimpleDate;
 
