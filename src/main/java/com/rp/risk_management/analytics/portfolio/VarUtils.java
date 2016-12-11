@@ -163,8 +163,8 @@ public abstract class VarUtils
         {
             double firstDayReturnSquared = Math.pow( firstDayReturn, 2 );
             double weight = ( 1 - lambda ) * Math.pow( lambda, currentDay );
-            variance = ( lambda * firstDayVariance )
-                       + ( weight * firstDayReturnSquared );
+            variance =  lambda * firstDayVariance
+                       +  weight * firstDayReturnSquared ;
         }
         // today's variance = yesterdaysVariance^2 * lambda + yesterdaysReturn^2
         // * ( 1 - lambda )
@@ -175,8 +175,8 @@ public abstract class VarUtils
             double yesterdayReturnSquared = Math
                                                 .pow( returns[currentDay + 1], 2 );
             double weight = ( 1 - lambda ) * Math.pow( lambda, currentDay );
-            variance = ( lambda * yesterdayVariance )
-                       + ( weight * yesterdayReturnSquared );
+            variance =  lambda * yesterdayVariance
+                       +  weight * yesterdayReturnSquared ;
         }
 
         return variance;
@@ -193,8 +193,8 @@ public abstract class VarUtils
         {
             double firstDayReturnsProduct = Math.pow( firstDayReturn, 2 );
             double weight = ( 1 - lambda ) * Math.pow( lambda, currentDay );
-            covariance = ( lambda * firstDayVariance )
-                         + ( weight * firstDayReturnsProduct );
+            covariance =  lambda * firstDayVariance
+                         +  weight * firstDayReturnsProduct;
             covariances_EWMA.set( currentDay, covariance );
         }
         else if( currentDay >= 0 )
@@ -204,8 +204,8 @@ public abstract class VarUtils
             double yesterdayReturnsProduct = returns1.get( currentDay + 1 )
                                              * returns2.get( currentDay + 1 );
             double weight = ( 1 - lambda ) * Math.pow( lambda, currentDay );
-            covariance = ( lambda * yesterdayCovariance )
-                         + ( weight * yesterdayReturnsProduct );
+            covariance = lambda * yesterdayCovariance
+                         + weight * yesterdayReturnsProduct;
         }
 
         return covariance;
@@ -247,8 +247,9 @@ public abstract class VarUtils
         if( day == returns.length - 1 )
         {
             double firstDayReturnSquared = Math.pow( firstDayReturn, 2 );
-            variance = omega + ( alpha * firstDayReturnSquared )
-                       + ( beta * firstDayVariance );
+            variance = omega +
+                       alpha * firstDayReturnSquared +
+                       beta * firstDayVariance;
         }
         // variance = weightLRV*longRunVariance + weightPR*previousReturn +
         // weightVariance*previousVariance
@@ -258,8 +259,9 @@ public abstract class VarUtils
             double yesterdayVariance = getVariance_GARCH2( day + 1,
                                                            returns );
             double yesterdayReturnSquared = Math.pow( returns[day + 1], 2 );
-            variance = omega + ( alpha * yesterdayReturnSquared )
-                       + ( beta * yesterdayVariance );
+            variance = omega +
+                        alpha * yesterdayReturnSquared +
+                        beta * yesterdayVariance;
         }
         return variance;
     }
