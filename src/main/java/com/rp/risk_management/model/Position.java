@@ -3,8 +3,6 @@ package com.rp.risk_management.model;
 import com.rp.risk_management.marketdata.model.Stock;
 import com.rp.risk_management.util.date.SimpleDate;
 
-import java.util.List;
-
 /**
  * Representation of an position.
  * Holds parameters for historical stock price data location, an identifier and the investment_.

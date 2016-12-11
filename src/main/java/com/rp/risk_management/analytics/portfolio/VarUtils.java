@@ -137,7 +137,7 @@ public abstract class VarUtils
     {
         double varianceCurrentDay = getVariance_EWMA( 0, returns );
         double ewma =  lambda * varianceCurrentDay
-                      + ( ( 1 - lambda ) * Math.pow( returns[0], 2 ) );
+                      + ( 1 - lambda ) * Math.pow( returns[0], 2 );
         double volatility = Math.sqrt( ewma );
         return volatility;
     }

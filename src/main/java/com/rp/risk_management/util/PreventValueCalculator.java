@@ -18,7 +18,7 @@ public class PreventValueCalculator {
         // e.g. 1000 in 5 years at 10%, PV = 1000 / (1+0.10)^5
         // if in days, convert to years
         timeToMaturity = timeToMaturity / VarUtils.DAYS_IN_YEAR;
-        double denominator = Math.pow( ( 1 + interest ), timeToMaturity );
+        double denominator = Math.pow( 1 + interest, timeToMaturity );
         double valueOfOption = meanValue / denominator;
         return valueOfOption;
     }

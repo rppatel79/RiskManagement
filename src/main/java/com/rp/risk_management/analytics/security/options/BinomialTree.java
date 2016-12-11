@@ -78,11 +78,11 @@ public class BinomialTree implements OptionPricer {
 
         // http://en.wikipedia.org/wiki/Binomial_options_pricing_model
 
-        u = Math.exp( ( volatility * Math.sqrt( dt ) ) );
+        u = Math.exp( volatility * Math.sqrt( dt ) );
         d = 1 / u;
 
         // u >= 1, 0 < d <= 1
-        if( ( u < 1 ) || ( d < 0 ) || ( d > 1 ) )
+        if( u < 1 || d < 0 || d > 1 )
         {
             logger_.error( "Error calculating u and d." );
             throw new IllegalStateException("Error calculating u and d.");
@@ -191,8 +191,8 @@ public class BinomialTree implements OptionPricer {
                         {
                             case Call:
                                 binomialValue = eMinusRT
-                                        * ((p * values[row][column + 1]) + (1 - p)
-                                        * values[row + 1][column + 1]);
+                                        * (p * values[row][column + 1]) + (1 - p)
+                                        * values[row + 1][column + 1];
                                 // intrinsic value for call is Max(Sn - X, 0)
                                 intrinsicValue = Math.max(tree[row][column] - X, 0);
                                 values[row][column] = Math.max(binomialValue, intrinsicValue);
@@ -213,14 +213,14 @@ public class BinomialTree implements OptionPricer {
                             case Call:
                                 // no option of early exercise, so binomial value applies
                                 binomialValue = eMinusRT
-                                        * ( ( p * values[row][column + 1] ) + ( 1 - p )
-                                        * values[row + 1][column + 1] );
+                                        * ( p * values[row][column + 1] ) + ( 1 - p )
+                                        * values[row + 1][column + 1];
                                 values[row][column] = binomialValue;
                                 break;
                             case Put:
                                 binomialValue = eMinusRT
-                                        * ( ( p * values[row][column + 1] ) + ( 1 - p )
-                                        * values[row + 1][column + 1] );
+                                        * ( p * values[row][column + 1] ) + ( 1 - p )
+                                        * values[row + 1][column + 1];
                                 values[row][column] = binomialValue;
                                 break;
                         }
