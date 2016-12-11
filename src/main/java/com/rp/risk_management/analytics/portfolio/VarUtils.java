@@ -136,7 +136,7 @@ public abstract class VarUtils
     static double computeVolatility_EWMA( double[] returns )
     {
         double varianceCurrentDay = getVariance_EWMA( 0, returns );
-        double ewma = ( lambda * varianceCurrentDay )
+        double ewma =  lambda * varianceCurrentDay
                       + ( ( 1 - lambda ) * Math.pow( returns[0], 2 ) );
         double volatility = Math.sqrt( ewma );
         return volatility;
@@ -460,7 +460,7 @@ public abstract class VarUtils
 
         for( int i = 0 ; i < sampleSize ; i++ )
         {
-            differences[i] = ( ( r1[i] - avg1 ) * ( r2[i] - avg2 ) );
+            differences[i] = ( r1[i] - avg1 ) * ( r2[i] - avg2 );
         }
 
         double sumOfDifferences = StatUtils.sum( differences );
@@ -533,11 +533,11 @@ public abstract class VarUtils
      */
     public static double CNDF( double x )
     {
-        int neg = ( x < 0d ) ? 1 : 0;
+        int neg = x < 0d ? 1 : 0;
         if( neg == 1 )
             x *= -1d;
 
-        double k = ( 1d / ( 1d + 0.2316419 * x ) );
+        double k = 1d / ( 1d + 0.2316419 * x );
         double y = ( ( ( ( 1.330274429 * k - 1.821255978 ) * k + 1.781477937 ) * k - 0.356563782 )
                      * k + 0.319381530 )
                    * k;
