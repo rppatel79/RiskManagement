@@ -1,15 +1,15 @@
 package com.rp.risk_management.analytics.security.options;
 
-import com.rp.risk_management.model.Option;
 import com.rp.risk_management.analytics.portfolio.VarUtils;
-import org.apache.log4j.Logger;
-
+import com.rp.risk_management.model.Option;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  * Class implementing the Binomial Tree option pricing algorithm.
  * Can be initialised with an {@link Option} or separate values.
  */
 public class BinomialTree implements OptionPricer {
-    private static final Logger logger_ = Logger.getLogger(BinomialTree.class);
+    private static final Logger logger_ = LogManager.getLogger(BinomialTree.class);
 
     private final double S, X, T, volatility, interest;
     private final Option.OptionType optionType_;

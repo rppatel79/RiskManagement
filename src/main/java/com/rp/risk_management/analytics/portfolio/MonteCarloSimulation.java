@@ -3,10 +3,6 @@
  */
 package com.rp.risk_management.analytics.portfolio;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarlo;
 import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarloBinomialTree;
 import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarloBlackScholes;
@@ -17,14 +13,19 @@ import com.rp.risk_management.util.QuoteHelper;
 import com.rp.risk_management.util.model.PortfolioUtil;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Implementation of the Monte Carlo Simulation model for computing VaR and pricing options.
  */
 public class MonteCarloSimulation
 {
-    private static final Logger logger_= Logger.getLogger(MonteCarloSimulation.class);
+    private static final Logger logger_ = LogManager.getLogger(MonteCarloSimulation.class);
 
     /** Number of days to simulate prices over and getOptionPrice VaR for. */
     public static final int DEFAULT_TIME_PERIOD = 10;

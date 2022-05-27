@@ -3,17 +3,18 @@
  */
 package com.rp.risk_management.analytics.portfolio;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Utility class containing methods commonly used within the Value at Risk
@@ -22,25 +23,31 @@ import org.apache.log4j.Logger;
  */
 public abstract class VarUtils
 {
-    private static final Logger logger_ = Logger.getLogger(VarUtils.class);
+    private static final Logger logger_ = LogManager.getLogger(VarUtils.class);
 
-    /** Types of option pricing models and their action commands used in the GUI.
+    /**
+     * Types of option pricing models and their action commands used in the GUI.
+     *
      * @deprecated
-     * */
-    public static final String  MC = "MC";
-    /** Types of VaR models and their action commands used in the GUI. */
-    public static final String  MB               = "MB", HS = "HS";
-    public static final int     DAYS_IN_YEAR     = 252, DAYS_IN_MONTH = 21;
-    /** The decay factor in the EWMA algorithm. */
-    private static double       lambda           = 0.94;
-    private static double       firstDayVariance = 0.01;
-    private static double       firstDayReturn   = 0.02;
+     */
+    public static final String MC = "MC";
+    /**
+     * Types of VaR models and their action commands used in the GUI.
+     */
+    public static final String MB = "MB", HS = "HS";
+    public static final int DAYS_IN_YEAR = 252, DAYS_IN_MONTH = 21;
+    /**
+     * The decay factor in the EWMA algorithm.
+     */
+    private static final double lambda = 0.94;
+    private static final double firstDayVariance = 0.01;
+    private static final double firstDayReturn = 0.02;
     /**
      * Parameters for the GARCH(1,1) estimation of volatility.
      */
-    static double               gamma            = 0.05;
-    static double               alpha            = 0.13;
-    static double               beta             = 0.90;
+    static double gamma = 0.05;
+    static double alpha = 0.13;
+    static double beta = 0.90;
 
     // TODO best backtest results for 99% confidence
     // need to get MLE done for each set of returns to optimise parameters
@@ -116,9 +123,8 @@ public abstract class VarUtils
     static double computeVolatility_Standard( double[] returns )
     {
         DescriptiveStatistics stats = new DescriptiveStatistics();
-        for( int i = 0 ; i < returns.length ; i++ )
-        {
-            stats.addValue( (double) returns[i] );
+        for(int i = 0 ; i < returns.length; i++) {
+            stats.addValue(returns[i]);
         }
         double dailyVolatility = stats.getStandardDeviation();
         return dailyVolatility;
@@ -226,9 +232,8 @@ public abstract class VarUtils
          */
         double longRunVariance = 0.0;
         DescriptiveStatistics stats = new DescriptiveStatistics();
-        for( int i = 0 ; i < returns.length ; i++ )
-        {
-            stats.addValue( (double) returns[i] );
+        for(int i = 0 ; i < returns.length; i++) {
+            stats.addValue(returns[i]);
         }
         longRunVariance = stats.getVariance();
         // tune parameters for returns

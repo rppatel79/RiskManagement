@@ -5,13 +5,14 @@ package com.rp.risk_management.analytics.portfolio;
 
 import com.rp.risk_management.analytics.security.options.BinomialTree;
 import com.rp.risk_management.analytics.security.options.BlackScholes;
-import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarlo;
 import com.rp.risk_management.analytics.security.options.OptionPricer;
+import com.rp.risk_management.analytics.security.options.monte_carlo.MonteCarlo;
 import com.rp.risk_management.model.Option;
 import com.rp.risk_management.model.Portfolio;
 import com.rp.risk_management.util.QuoteHelper;
 import com.rp.risk_management.util.model.PortfolioUtil;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,26 +21,31 @@ import java.util.List;
 /**
  * Implementation of the Historical Simulation VaR model.
  */
-public class HistoricalSimulation
-{
-    private static final Logger logger_ = Logger.getLogger(HistoricalSimulation.class);
+public class HistoricalSimulation {
+    private static final Logger logger_ = LogManager.getLogger(HistoricalSimulation.class);
 
-    /** List of investments for a portfolio. */
-    private List<Double> portfolioValues;
-    /** The confidence level to getOptionPrice VaR for. */
-    private int               confidence;
-    /** The portfolio being used for VaR computation. */
-    private Portfolio portfolio;
-    private int varHorizon;
+    /**
+     * List of investments for a portfolio.
+     */
+    private final List<Double> portfolioValues;
+    /**
+     * The confidence level to getOptionPrice VaR for.
+     */
+    private final int confidence;
+    /**
+     * The portfolio being used for VaR computation.
+     */
+    private final Portfolio portfolio;
+    private final int varHorizon;
 
     /**
      * Constructor to initialise a Historical Simulation model using a portfolio and a confidence level.
-     * @param portfolio the portfolio to getOptionPrice VaR for.
+     *
+     * @param portfolio  the portfolio to getOptionPrice VaR for.
      * @param confidence the confidence level at which to getOptionPrice VaR.
      */
-    public HistoricalSimulation( Portfolio portfolio, int confidence )
-    {
-        this(portfolio,confidence,1);
+    public HistoricalSimulation(Portfolio portfolio, int confidence) {
+        this(portfolio, confidence, 1);
     }
 
     public HistoricalSimulation( Portfolio portfolio, int confidence, int varHorizon )
