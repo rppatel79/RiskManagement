@@ -16,5 +16,4 @@ public class BinomialTree_UnitTest extends TestCase
         double optionPrice =bt.getOptionPrice();
         Assert.assertEquals(4.1835, optionPrice, 0.0001);
     }
-
 }

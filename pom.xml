@@ -27,6 +27,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.rppatel79</groupId>
+            <artifactId>option-pricing-java</artifactId>
+            <version>v1.0</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
