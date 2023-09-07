@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <spring.version>5.3.27</spring.version>
+        <spring.version>5.2.22.RELEASE</spring.version>
     </properties>
 
     <repositories>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.github.rppatel79</groupId>
             <artifactId>yahoofinance-api</artifactId>
-            <version>v3.5.0</version>
+            <version>v3.8.0</version>
         </dependency>
 
         <dependency>
