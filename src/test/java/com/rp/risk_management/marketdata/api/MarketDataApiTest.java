@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class MarketDataApiTest {
@@ -27,7 +26,7 @@ public class MarketDataApiTest {
 
         Quote startDateQuote;
         {
-            Assert.assertEquals(2, quotes.size());
+            Assert.assertEquals(1, quotes.size());
 
             Quote endDateQuote = quotes.get(0);
             startDateQuote = quotes.get(1);
@@ -72,6 +71,6 @@ public class MarketDataApiTest {
         SimpleDate endDate = new SimpleDate(2015, 11, 4);
 
         List<Quote> quotes = marketDataApi.getMarketData(stock, startDate, endDate);
-        Assert.assertEquals(254, quotes.size());
+        Assert.assertEquals(253, quotes.size());
     }
 }

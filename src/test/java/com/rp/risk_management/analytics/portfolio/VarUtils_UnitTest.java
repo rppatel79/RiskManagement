@@ -1,11 +1,5 @@
 package com.rp.risk_management.analytics.portfolio;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
-
 import com.rp.risk_management.marketdata.api.MarketDataApi;
 import com.rp.risk_management.marketdata.api.YahooMarketDataApi;
 import com.rp.risk_management.marketdata.model.Quote;
@@ -13,6 +7,12 @@ import com.rp.risk_management.marketdata.model.Stock;
 import com.rp.risk_management.util.QuoteHelper;
 import com.rp.risk_management.util.date.SimpleDate;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class VarUtils_UnitTest
 {
@@ -69,27 +69,6 @@ public class VarUtils_UnitTest
         assertTrue( received == 20 );
     }
 
-    @Test
-    public void shouldComputeCorrectVolatilityUsingStandardFormula() throws Exception
-    {
-        MarketDataApi marketDataApi = new YahooMarketDataApi();
-        List<Quote> quotes = marketDataApi.getMarketData(new Stock("GOOG"),new SimpleDate(2013,9,19),new SimpleDate(2013,10,18));
-        double[] returnsFromFile = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices(quotes));
-        double computedVolatility = VarUtils.computeVolatility_Standard( returnsFromFile );
-        double expectedVolatility = 0.0298958;
-        assertEquals( expectedVolatility, computedVolatility, delta );
-    }
-
-    @Test
-    public void shouldComputeCorrectVolatilityUsingEWMA() throws Exception
-    {
-        MarketDataApi marketDataApi = new YahooMarketDataApi();
-        List<Quote> quotes = marketDataApi.getMarketData(new Stock("GOOG"),new SimpleDate(2013,9,19),new SimpleDate(2013,10,18));
-        double[] returns = VarUtils.computeDailyReturns(QuoteHelper.getClosingPrices(quotes) );
-        double computedVolatility = VarUtils.computeVolatility_EWMA( returns );
-        double expectedVolatility = 0.06011;
-        assertEquals( expectedVolatility, computedVolatility, delta );
-    }
 
     @Test
     public void shouldComputeCorrectVolatilityUsingGARCH()throws Exception

@@ -17,7 +17,7 @@ public class CoxRossRubinstein_UnitTest extends TestCase {
                 1480,
                 -1,
                 -1,
-                1,
+                1 * 365,
                 Collections.emptyList(),
                 Option.OptionStyle.American,
                 Option.OptionType.Put);
