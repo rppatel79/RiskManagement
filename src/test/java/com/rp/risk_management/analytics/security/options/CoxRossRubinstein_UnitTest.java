@@ -28,7 +28,7 @@ public class CoxRossRubinstein_UnitTest extends TestCase {
     }
 
     public void testShouldCreateBinomialTreeCorrectly2() {
-        // i created this test to compare with
+        // i created this test to compare with python's option-price
         Option option = new Option(408.43,
                 -1,
                 410,
