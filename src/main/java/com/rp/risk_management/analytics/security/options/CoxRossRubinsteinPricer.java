@@ -23,10 +23,14 @@ public class CoxRossRubinsteinPricer implements OptionPricer {
         optionPrice_ = pricingModel.price(option1);
     }
 
+    public CoxRossRubinsteinPricer(Option option, double rate, double volatility, double dividendYield) {
+        this(100, option, rate, volatility, dividendYield);
+    }
+
     private static dev.peterrhodes.optionpricing.Option buildOption(Option option, double rate, double volatility, double dividendYield) {
         OptionBuilder ob = new OptionBuilder(option.getInitialStockPrice(),
                 option.getStrike(),
-                option.getTimeToMaturity(),
+                1.0 * option.getTimeToMaturity() / 365.0,
                 volatility,
                 rate,
                 dividendYield);
